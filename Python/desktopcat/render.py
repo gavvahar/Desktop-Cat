@@ -9,7 +9,6 @@ from PySide6.QtCore import Qt, QPointF, QRectF
 from PySide6.QtGui import QBrush, QColor, QPainter, QPainterPath, QPen, QRegion
 from PySide6.QtWidgets import QWidget
 
-from desktopcat import state as st
 
 OUTLINE = QColor(70, 45, 30)
 FUR = QColor(242, 166, 90)

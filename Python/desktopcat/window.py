@@ -49,11 +49,7 @@ class CatWindow(QWidget):
         super().__init__()
         self.state = st.new_state()
 
-        self.setWindowFlags(
-            Qt.WindowType.FramelessWindowHint
-            | Qt.WindowType.WindowStaysOnTopHint
-            | Qt.WindowType.Tool
-        )
+        self.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.WindowStaysOnTopHint | Qt.WindowType.Tool)
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
         self.setFixedSize(st.WINDOW_SIZE, st.WINDOW_SIZE)
         self.setMask(render.build_click_mask_region(st.WINDOW_SIZE))

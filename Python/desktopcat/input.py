@@ -2,8 +2,7 @@
 state dict from state.py.
 """
 
-import random
-import time
+import random, time
 
 from desktopcat import state as st
 
@@ -32,11 +31,11 @@ def update_cursor_velocity(state):
         return
 
     vx, vy, _dt = _velocity_between(history[-2], history[-1])
-    speed = (vx ** 2 + vy ** 2) ** 0.5
+    speed = (vx**2 + vy**2) ** 0.5
 
     prev_speed = state["cursor_velocity"]
     state["cursor_velocity"] = speed
-    state["_cursor_accel"] = (speed - prev_speed)  # can be negative (deceleration)
+    state["_cursor_accel"] = speed - prev_speed  # can be negative (deceleration)
 
     if speed > 1.0:
         state["cursor_dir"] = (vx / speed, vy / speed)
@@ -84,7 +83,7 @@ def update_eye_target(state, cursor_pos):
     center_y = wy + st.WINDOW_SIZE * 0.4  # eyes sit above vertical center
     dx = cursor_pos[0] - center_x
     dy = cursor_pos[1] - center_y
-    dist = (dx ** 2 + dy ** 2) ** 0.5
+    dist = (dx**2 + dy**2) ** 0.5
     if dist < 1e-3:
         state["eye_target"] = [0.0, 0.0]
         return
@@ -103,9 +102,7 @@ def update_blink(state, now):
     if state["is_blinking"]:
         if now >= state["blink_ends_at"]:
             state["is_blinking"] = False
-            state["next_blink_at"] = now + random.uniform(
-                st.BLINK_MIN_INTERVAL, st.BLINK_MAX_INTERVAL
-            )
+            state["next_blink_at"] = now + random.uniform(st.BLINK_MIN_INTERVAL, st.BLINK_MAX_INTERVAL)
         return
 
     if now >= state["next_blink_at"]:
