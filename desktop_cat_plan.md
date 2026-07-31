@@ -50,14 +50,14 @@ A free, open-source pixel-cat desktop companion (Comnyang-style) built in
 
 ### Phase 1 — Cursor reactions
 
-- [ ] **Mouse-hunt** — cursor velocity above a threshold → chase / pounce pose
-- [ ] **Pet-to-purr** — slow cursor movement over the head region → purr anim
-- [ ] Tune eye-follow easing & idle blink
+- [x] **Mouse-hunt** — cursor velocity above a threshold → chase / pounce pose
+- [x] **Pet-to-purr** — slow cursor movement over the head region → purr anim
+- [x] Tune eye-follow easing & idle blink
 
 ### Phase 2 — Physics & touch
 
-- [ ] **Mochi drag** — squash/stretch on lift, wobble on shake, settle on drop
-- [ ] Edge/gravity behavior (optional: rest on screen bottom)
+- [x] **Mochi drag** — squash/stretch on lift, wobble on shake, settle on drop
+- [x] Edge/gravity behavior (optional: rest on screen bottom)
 
 ### Phase 3 — Keyboard reactions
 
@@ -118,5 +118,5 @@ A free, open-source pixel-cat desktop companion (Comnyang-style) built in
 
 ## Next action
 
-Phase 1: **mouse-hunt + pet-to-purr**, building on the eye-follow loop already
-in the v0 starter.
+Phase 3: **kneading + overheat**, upgrading the keyboard stub from Phase 0
+with real per-keypress animation and a sustained-typing reaction.
