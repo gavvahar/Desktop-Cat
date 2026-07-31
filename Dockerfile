@@ -9,6 +9,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     linux-libc-dev \
     libgl1 \
     libegl1 \
+    libglib2.0-0 \
     libxkbcommon0 \
     libxkbcommon-x11-0 \
     libdbus-1-3 \
