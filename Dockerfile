@@ -1,8 +1,12 @@
 FROM python:3.12-slim
 
-# Qt (xcb platform plugin) + PySide6 runtime libraries. No display server is
-# bundled -- the container talks to the host's X11 server (see README).
+# Qt (xcb platform plugin) + PySide6 runtime libraries, plus build tools for
+# pynput's evdev extension (needs linux/input.h, not present in the slim
+# base image). No display server is bundled -- the container talks to the
+# host's X11 server (see README).
 RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    linux-libc-dev \
     libgl1 \
     libegl1 \
     libxkbcommon0 \
