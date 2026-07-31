@@ -1,0 +1,6 @@
+PySide6
+pynput
+nodeenv
+tox
+python-dotenv
+ruff
