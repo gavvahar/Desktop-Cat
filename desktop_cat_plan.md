@@ -14,13 +14,13 @@ A free, open-source pixel-cat desktop companion (Comnyang-style) built in
 
 ## Stack
 
-| Layer | Choice | Why |
-|---|---|---|
-| App framework | PySide6 (Qt) | Python-first, light RAM, good transparent-window support |
-| Rendering | QPainter (procedural now) → sprite sheets later | Start asset-free, swap in art |
-| Global input | `pynput` (X11) / `python-evdev` (Wayland) | Reacts to input anywhere on screen |
-| Packaging | AppImage or Flatpak (Flathub) | Standard Linux distribution |
-| Art tool | Aseprite (or commission) | Pixel sprite sheets + palette maps |
+| Layer         | Choice                                          | Why                                                      |
+| ------------- | ----------------------------------------------- | -------------------------------------------------------- |
+| App framework | PySide6 (Qt)                                    | Python-first, light RAM, good transparent-window support |
+| Rendering     | QPainter (procedural now) → sprite sheets later | Start asset-free, swap in art                            |
+| Global input  | `pynput` (X11) / `python-evdev` (Wayland)       | Reacts to input anywhere on screen                       |
+| Packaging     | AppImage or Flatpak (Flathub)                   | Standard Linux distribution                              |
+| Art tool      | Aseprite (or commission)                        | Pixel sprite sheets + palette maps                       |
 
 ## The hard parts (read before building)
 
@@ -40,6 +40,7 @@ A free, open-source pixel-cat desktop companion (Comnyang-style) built in
 ## Build phases
 
 ### Phase 0 — Foundation ✅ (done in v0)
+
 - [x] Transparent, frameless, always-on-top window
 - [x] Shape mask (click-through on empty space)
 - [x] Procedural pixel cat (no assets needed)
@@ -48,22 +49,27 @@ A free, open-source pixel-cat desktop companion (Comnyang-style) built in
 - [x] Global keyboard "kneading" stub
 
 ### Phase 1 — Cursor reactions
+
 - [ ] **Mouse-hunt** — cursor velocity above a threshold → chase / pounce pose
 - [ ] **Pet-to-purr** — slow cursor movement over the head region → purr anim
 - [ ] Tune eye-follow easing & idle blink
 
 ### Phase 2 — Physics & touch
+
 - [ ] **Mochi drag** — squash/stretch on lift, wobble on shake, settle on drop
 - [ ] Edge/gravity behavior (optional: rest on screen bottom)
 
 ### Phase 3 — Keyboard reactions
+
 - [ ] **Kneading** anim on keypress (upgrade the stub)
 - [ ] **Overheat** — high keystroke rate → red tint + steam particles
 
 ### Phase 4 — Scroll
+
 - [ ] **Paper unroll** — scroll events → unspool/re-roll paper animation
 
 ### Phase 5 — Timers & reminders (pure Python — easy wins)
+
 - [ ] Stretch reminder (interval → grow/stretch anim)
 - [ ] Drink-water reminder
 - [ ] Pomodoro (focus/break loops + floating pixel timer)
@@ -71,15 +77,18 @@ A free, open-source pixel-cat desktop companion (Comnyang-style) built in
 - [ ] Pinned/fixed message above the cat
 
 ### Phase 6 — Personalization
+
 - [ ] Color + pattern **palette-swap** on a base sprite at runtime
 - [ ] "Tell your name" → use it in reminders/breaks
 - [ ] Settings window + persist to a local config file (JSON/TOML)
 
 ### Phase 7 — Advanced
+
 - [ ] **Peek mode** — detect fullscreen video → move to screen edge, mute reactions
 - [ ] **AI-agent hooks** — thinking-along + done-jump for Claude Code / Codex / Cursor
 
 ### Phase 8 — Ship
+
 - [ ] Settings persistence + autostart entry
 - [ ] Package as AppImage and/or Flatpak
 - [ ] GitHub repo + README + LICENSE (MIT = permissive, GPL = keeps forks open)
