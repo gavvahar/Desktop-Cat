@@ -4,8 +4,9 @@ A free, open-source pixel-cat desktop companion, built with PySide6.
 See [desktop_cat_plan.md](desktop_cat_plan.md) for the full build plan.
 
 Currently implemented: **Phase 0** (transparent always-on-top window, click-through
-mask, procedural drawing, eye-follow, drag, keyboard stub) and **Phase 1**
-(mouse-hunt, pet-to-purr, eased eye-follow, idle blink).
+mask, procedural drawing, eye-follow, drag, keyboard stub), **Phase 1**
+(mouse-hunt, pet-to-purr, eased eye-follow, idle blink), and **Phase 2**
+(mochi drag squash/stretch/wobble, gravity to rest on the screen bottom).
 
 ## Code style note
 
