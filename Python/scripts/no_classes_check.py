@@ -16,7 +16,9 @@ EXCLUDE_DIRS = {
     "env",
 }
 
-EXCLUDE_FILES = {"test.py", "jc_api.py"}
+# window.py: PySide6 requires subclassing QWidget to override paintEvent /
+# mouse events -- there's no classless way to do that.
+EXCLUDE_FILES = {"test.py", "jc_api.py", "window.py"}
 
 
 def iter_py_files():
