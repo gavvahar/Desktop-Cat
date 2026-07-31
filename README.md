@@ -63,7 +63,7 @@ xhost -local:docker   # revoke access when done
 ```
 
 Or with Compose (`docker compose up --build` / `podman-compose up --build`),
-using the included `docker-compose.yml`.
+using the included `compose.yml`.
 
 **Notes**
 
