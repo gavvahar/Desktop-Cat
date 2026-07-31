@@ -36,9 +36,21 @@ def build_click_mask_region(size):
 
 
 def paint(widget: QWidget, state: dict, now: float):
+    width, height = widget.width(), widget.height()
+    pivot_x, pivot_y = width / 2, height * 0.85  # base_y in draw_cat -- feet stay put
+
     painter = QPainter(widget)
     painter.setRenderHint(QPainter.RenderHint.Antialiasing, True)
-    draw_cat(painter, state, widget.width(), widget.height(), now)
+
+    painter.save()
+    painter.translate(pivot_x, pivot_y)
+    painter.rotate(math.degrees(state["wobble_angle"]))
+    stretch = state["stretch"]
+    painter.scale(1.0 - stretch * 0.6, 1.0 + stretch)
+    painter.translate(-pivot_x, -pivot_y)
+
+    draw_cat(painter, state, width, height, now)
+    painter.restore()
     painter.end()
 
 

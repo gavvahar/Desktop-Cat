@@ -25,6 +25,24 @@ HEAD_REGION_FRACTION = 0.45  # top fraction of the window counted as "head"
 
 CURSOR_HISTORY_LEN = 6
 
+# -- tuning constants (Phase 2: "mochi drag" + gravity) ---------------------
+LIFT_SQUASH = 0.30  # instant squash amount when picked up (0..1)
+SPRING_K = 90.0  # squash/stretch spring stiffness
+SPRING_DAMPING = 9.0  # squash/stretch spring damping
+DRAG_STRETCH_DIVISOR = 900.0  # px/s of vertical drag speed -> full stretch target
+MAX_DRAG_STRETCH = 0.45
+
+SHAKE_VELOCITY_THRESHOLD = 250.0  # px/s horizontal speed to count as a shake
+SHAKE_ENERGY_GAIN = 0.45
+SHAKE_ENERGY_DECAY = 3.0  # per second
+MAX_SHAKE_ENERGY = 1.5
+WOBBLE_FREQ = 18.0  # rad/s
+MAX_WOBBLE_RAD = 0.22
+
+GRAVITY = 2200.0  # px/s^2
+MAX_FALL_SPEED = 2600.0  # px/s
+LANDING_SQUASH_SCALE = 0.55  # fraction of MAX_FALL_SPEED -> full landing squash
+
 
 def new_state():
     now = time.monotonic()
@@ -44,6 +62,16 @@ def new_state():
         "pounce_ends_at": 0.0,
         "kneading": False,
         "kneading_ends_at": 0.0,
+        "prev_window_pos": (100, 100),
+        "drag_vx": 0.0,
+        "drag_vy": 0.0,
+        "shake_energy": 0.0,
+        "wobble_angle": 0.0,
+        "stretch": 0.0,
+        "stretch_vel": 0.0,
+        "falling": False,
+        "fall_vy": 0.0,
+        "floor_y": 100,
         "pose": {
             "crouch": 0.0,
             "ear_flatten": 0.0,

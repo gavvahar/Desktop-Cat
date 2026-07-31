@@ -14,6 +14,7 @@ from PySide6.QtGui import QCursor
 from PySide6.QtWidgets import QWidget
 
 from desktopcat import input as cat_input
+from desktopcat import physics
 from desktopcat import render
 from desktopcat import state as st
 
@@ -26,15 +27,25 @@ def tick(window):
     dt = max(1e-4, now - state["last_tick"])
     state["last_tick"] = now
 
-    if not state["dragging"]:
+    if state["dragging"]:
         state["window_pos"] = (window.x(), window.y())
+        physics.update_drag_physics(state, dt, now)
+    elif state["falling"]:
+        physics.update_gravity(state, dt)
+        window.move(int(state["window_pos"][0]), int(state["window_pos"][1]))
+    else:
+        state["window_pos"] = (window.x(), window.y())
+
+    physics.update_squash_spring(state, dt)
+    state["prev_window_pos"] = state["window_pos"]
 
     cursor = QCursor.pos()
     cursor_pos = (cursor.x(), cursor.y())
 
     cat_input.push_cursor_sample(state, cursor_pos[0], cursor_pos[1], now)
     cat_input.update_cursor_velocity(state)
-    cat_input.update_mood(state, now, cursor_pos)
+    if not state["dragging"]:
+        cat_input.update_mood(state, now, cursor_pos)
     cat_input.update_eye_target(state, cursor_pos)
     cat_input.ease_eyes(state, dt)
     cat_input.update_blink(state, now)
@@ -61,6 +72,8 @@ class CatWindow(QWidget):
         )
         self.move(*start_pos)
         self.state["window_pos"] = start_pos
+        self.state["prev_window_pos"] = start_pos
+        self.state["floor_y"] = start_pos[1]
 
         self._keyboard_listener = cat_input.start_keyboard_listener(self.state)
 
@@ -74,6 +87,7 @@ class CatWindow(QWidget):
     def mousePressEvent(self, event):
         global_pos = (event.globalPosition().x(), event.globalPosition().y())
         cat_input.start_drag(self.state, global_pos, self.state["window_pos"])
+        physics.on_pick_up(self.state)
 
     def mouseMoveEvent(self, event):
         if not self.state["dragging"]:
@@ -85,3 +99,4 @@ class CatWindow(QWidget):
 
     def mouseReleaseEvent(self, _event):
         cat_input.end_drag(self.state)
+        physics.start_falling(self.state)
