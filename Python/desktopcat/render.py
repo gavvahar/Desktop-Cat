@@ -100,6 +100,8 @@ def draw_cat(painter, state, width, height, now):
         _draw_stripes(painter, cx, base_y, body_w, body_h, head_cy, head_r, stripe_color)
     _draw_face(painter, state, cx, head_cy, head_r, now)
     _draw_steam_particles(painter, state["steam_particles"], cx, head_cy - head_r * 1.05)
+    if state.get("ai_active"):
+        _draw_thinking_dots(painter, cx, head_cy - head_r * 1.3, now)
 
 
 def _draw_body(painter, cx, base_y, w, h, fur_color):
@@ -316,3 +318,16 @@ def _draw_steam_particles(painter, particles, cx, top_y):
         color.setAlpha(max(0, int(alpha)))
         painter.setBrush(QBrush(color))
         painter.drawEllipse(QPointF(cx + p["dx"], top_y - p["rise"]), radius, radius)
+
+
+def _draw_thinking_dots(painter, cx, top_y, now):
+    """Phase 7: a little "..." while a known AI coding tool is running."""
+    painter.setPen(NO_PEN)
+    for i in range(3):
+        phase = now * 4.0 - i * 0.6
+        bob = math.sin(phase) * 3.0
+        alpha = 120 + int(math.sin(phase) * 60)
+        color = QColor(120, 150, 220)
+        color.setAlpha(max(60, alpha))
+        painter.setBrush(QBrush(color))
+        painter.drawEllipse(QPointF(cx - 10 + i * 10, top_y + bob), 2.5, 2.5)

@@ -84,8 +84,8 @@ A free, open-source pixel-cat desktop companion (Comnyang-style) built in
 
 ### Phase 7 — Advanced
 
-- [ ] **Peek mode** — detect fullscreen video → move to screen edge, mute reactions
-- [ ] **AI-agent hooks** — thinking-along + done-jump for Claude Code / Codex / Cursor
+- [x] **Peek mode** — detect fullscreen video → move to screen edge, mute reactions (X11-only, best-effort)
+- [x] **AI-agent hooks** — thinking-along + done-jump for Claude Code / Codex / Cursor (best-effort process-name polling, as bespoke/crude as the plan warned)
 
 ### Phase 8 — Ship
 
@@ -118,5 +118,5 @@ A free, open-source pixel-cat desktop companion (Comnyang-style) built in
 
 ## Next action
 
-Phase 7: **advanced** -- peek mode (fullscreen video detection) and
-best-effort AI-agent hooks.
+Phase 8: **ship** -- settings persistence + autostart entry, GitHub repo +
+README + LICENSE, and original sprite art.

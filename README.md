@@ -11,9 +11,13 @@ mask, procedural drawing, eye-follow, drag, keyboard stub), **Phase 1**
 particles on sustained fast typing), **Phase 4** (paper scroll that
 unspools while scrolling and re-rolls once you stop), **Phase 5**
 (stretch/water/Pomodoro/custom reminders and a pinned message, all shown in
-a floating bubble above the cat), and **Phase 6** (custom fur color +
+a floating bubble above the cat), **Phase 6** (custom fur color +
 optional tabby pattern, a name used in reminders, and a right-click
-Settings window -- all persisted to `~/.config/desktopcat/config.json`).
+Settings window -- all persisted to `~/.config/desktopcat/config.json`), and
+**Phase 7** (peek mode: slides to the screen edge and mutes reactions when
+a fullscreen window is active, X11-only best-effort; and best-effort
+"AI-agent" hooks -- a little thinking-along animation while a known AI
+coding tool process is running, and a done-jump when it exits).
 
 Right-click the cat for Settings / Quit.
 

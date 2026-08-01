@@ -13,8 +13,10 @@ from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QCursor
 from PySide6.QtWidgets import QApplication, QLabel, QMenu, QWidget
 
+from desktopcat import ai_hooks
 from desktopcat import config as cat_config
 from desktopcat import input as cat_input
+from desktopcat import peek
 from desktopcat import physics
 from desktopcat import reminders
 from desktopcat import render
@@ -101,6 +103,12 @@ def tick(window):
     elif state["falling"]:
         physics.update_gravity(state, dt)
         window.move(int(state["window_pos"][0]), int(state["window_pos"][1]))
+    elif abs(state["window_pos"][0] - state["peek_target_x"]) > 0.5:
+        cur_x, cur_y = window.x(), window.y()
+        lerp = min(1.0, dt * st.PEEK_EASE_SPEED)
+        new_x = cur_x + (state["peek_target_x"] - cur_x) * lerp
+        window.move(int(new_x), cur_y)
+        state["window_pos"] = (new_x, cur_y)
     else:
         state["window_pos"] = (window.x(), window.y())
 
@@ -112,18 +120,22 @@ def tick(window):
 
     cat_input.push_cursor_sample(state, cursor_pos[0], cursor_pos[1], now)
     cat_input.update_cursor_velocity(state)
-    if not state["dragging"]:
+    if not state["dragging"] and not state["peek_mode"]:
         cat_input.update_mood(state, now, cursor_pos)
     cat_input.update_eye_target(state, cursor_pos)
     cat_input.ease_eyes(state, dt)
     cat_input.update_blink(state, now)
     cat_input.update_kneading(state, now)
-    cat_input.update_kneading_anim(state, dt)
-    cat_input.update_heat(state, now, dt)
-    cat_input.update_steam_particles(state, dt)
-    cat_input.update_scrolling(state, now)
-    cat_input.update_scroll_anim(state, dt)
+    if not state["peek_mode"]:
+        cat_input.update_kneading_anim(state, dt)
+        cat_input.update_heat(state, now, dt)
+        cat_input.update_steam_particles(state, dt)
+        cat_input.update_scrolling(state, now)
+        cat_input.update_scroll_anim(state, dt)
     cat_input.update_pose(state, dt)
+
+    peek.update_peek_mode(state, now)
+    ai_hooks.update_ai_watch(state, now)
 
     reminders.update_reminders(state, now)
     reminders.update_pomodoro(state, now)
@@ -155,6 +167,9 @@ class CatWindow(QWidget):
         self.state["window_pos"] = start_pos
         self.state["prev_window_pos"] = start_pos
         self.state["floor_y"] = start_pos[1]
+        self.state["screen_right"] = screen_geo.right()
+        self.state["peek_rest_x"] = start_pos[0]
+        self.state["peek_target_x"] = start_pos[0]
 
         self._keyboard_listener = cat_input.start_keyboard_listener(self.state)
         self._scroll_listener = cat_input.start_scroll_listener(self.state)

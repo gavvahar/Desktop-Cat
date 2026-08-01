@@ -68,6 +68,9 @@ SCROLL_ENVELOPE_SPEED = 8.0  # per second, unroll/re-roll rate
 # -- tuning constants (Phase 5: timers & reminders) --------------------------
 STRETCH_REMINDER_AMOUNT = 0.4  # instant grow/stretch impulse on a stretch reminder
 
+# -- tuning constants (Phase 7: peek mode + AI-agent hooks) ------------------
+PEEK_EASE_SPEED = 4.0  # per second, slide-to-edge/back rate
+
 
 def new_state():
     now = time.monotonic()
@@ -116,6 +119,13 @@ def new_state():
         "falling": False,
         "fall_vy": 0.0,
         "floor_y": 100,
+        "screen_right": 100,
+        "peek_mode": False,
+        "peek_check_next_at": 0.0,
+        "peek_rest_x": 100,
+        "peek_target_x": 100,
+        "ai_active": False,
+        "ai_watch_next_at": 0.0,
         "pose": {
             "crouch": 0.0,
             "ear_flatten": 0.0,
