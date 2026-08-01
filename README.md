@@ -8,8 +8,11 @@ mask, procedural drawing, eye-follow, drag, keyboard stub), **Phase 1**
 (mouse-hunt, pet-to-purr, eased eye-follow, idle blink), **Phase 2**
 (mochi drag squash/stretch/wobble, gravity to rest on the screen bottom),
 **Phase 3** (kneading paw animation on keypress, overheat red tint + steam
-particles on sustained fast typing), and **Phase 4** (paper scroll that
-unspools while scrolling and re-rolls once you stop).
+particles on sustained fast typing), **Phase 4** (paper scroll that
+unspools while scrolling and re-rolls once you stop), and **Phase 5**
+(stretch/water/Pomodoro/custom reminders and a pinned message, all shown in
+a floating bubble above the cat; configured via
+`~/.config/desktopcat/config.json`).
 
 ## Code style note
 

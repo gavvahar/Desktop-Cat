@@ -11,14 +11,57 @@ import time
 
 from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QCursor
-from PySide6.QtWidgets import QWidget
+from PySide6.QtWidgets import QLabel, QWidget
 
+from desktopcat import config as cat_config
 from desktopcat import input as cat_input
 from desktopcat import physics
+from desktopcat import reminders
 from desktopcat import render
 from desktopcat import state as st
 
 TICK_MS = 16  # ~60 fps
+
+BUBBLE_STYLE = """
+    background-color: rgba(255, 250, 240, 235);
+    color: rgb(70, 45, 30);
+    border: 2px solid rgb(70, 45, 30);
+    border-radius: 10px;
+    padding: 5px 9px;
+    font-size: 12px;
+"""
+
+
+def create_bubble():
+    """A small floating message label above the cat (Phase 5: reminders /
+    Pomodoro / pinned message). A plain QLabel instance -- using Qt's own
+    widget class isn't "defining a class", same as QTimer/QCursor elsewhere.
+    """
+    bubble = QLabel()
+    flags = Qt.WindowType.FramelessWindowHint | Qt.WindowType.WindowStaysOnTopHint
+    if not is_wsl():
+        # Same WSLg caveat as CatWindow's Tool flag (see is_wsl()) -- untested
+        # whether ToolTip has the same drop-the-window-entirely behavior, so
+        # stay conservative and skip it there too.
+        flags |= Qt.WindowType.ToolTip
+    bubble.setWindowFlags(flags)
+    bubble.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
+    bubble.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
+    bubble.setStyleSheet(BUBBLE_STYLE)
+    bubble.hide()
+    return bubble
+
+
+def update_bubble(bubble, window, text):
+    if not text:
+        bubble.hide()
+        return
+    bubble.setText(text)
+    bubble.adjustSize()
+    x = window.x() + window.width() // 2 - bubble.width() // 2
+    y = window.y() - bubble.height() - 6
+    bubble.move(x, y)
+    bubble.show()
 
 
 def is_wsl():
@@ -70,6 +113,11 @@ def tick(window):
     cat_input.update_scroll_anim(state, dt)
     cat_input.update_pose(state, dt)
 
+    reminders.update_reminders(state, now)
+    reminders.update_pomodoro(state, now)
+    reminders.update_message(state, now)
+    update_bubble(window._bubble, window, reminders.current_bubble_text(state))
+
     window.update()
 
 
@@ -98,6 +146,16 @@ class CatWindow(QWidget):
 
         self._keyboard_listener = cat_input.start_keyboard_listener(self.state)
         self._scroll_listener = cat_input.start_scroll_listener(self.state)
+
+        config = cat_config.load_config()
+        now = time.monotonic()
+        self.state["config"] = config
+        self.state["reminder_schedule"] = reminders.build_reminder_schedule(config, now)
+        self.state["pinned_message"] = config["reminders"]["pinned_message"]
+        if config["pomodoro"]["enabled"]:
+            reminders.start_pomodoro(self.state, config, now)
+
+        self._bubble = create_bubble()
 
         self._timer = QTimer(self)
         self._timer.timeout.connect(lambda: tick(self))

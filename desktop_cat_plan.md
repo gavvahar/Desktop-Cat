@@ -70,11 +70,11 @@ A free, open-source pixel-cat desktop companion (Comnyang-style) built in
 
 ### Phase 5 — Timers & reminders (pure Python — easy wins)
 
-- [ ] Stretch reminder (interval → grow/stretch anim)
-- [ ] Drink-water reminder
-- [ ] Pomodoro (focus/break loops + floating pixel timer)
-- [ ] Custom message reminder (time + text → meow)
-- [ ] Pinned/fixed message above the cat
+- [x] Stretch reminder (interval → grow/stretch anim)
+- [x] Drink-water reminder
+- [x] Pomodoro (focus/break loops + floating pixel timer)
+- [x] Custom message reminder (interval + text, configurable in config.json; message shown in the floating bubble)
+- [x] Pinned/fixed message above the cat
 
 ### Phase 6 — Personalization
 
@@ -118,5 +118,5 @@ A free, open-source pixel-cat desktop companion (Comnyang-style) built in
 
 ## Next action
 
-Phase 5: **timers & reminders** -- stretch, drink-water, Pomodoro, and
-custom message reminders, plus a pinned message above the cat.
+Phase 6: **personalization** -- palette-swap, "tell your name", and a
+settings window that persists to config.json.

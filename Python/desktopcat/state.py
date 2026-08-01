@@ -65,6 +65,9 @@ STEAM_DRIFT_MAX = 34.0
 SCROLL_HOLD = 0.35  # seconds a scroll event keeps the unroll envelope up
 SCROLL_ENVELOPE_SPEED = 8.0  # per second, unroll/re-roll rate
 
+# -- tuning constants (Phase 5: timers & reminders) --------------------------
+STRETCH_REMINDER_AMOUNT = 0.4  # instant grow/stretch impulse on a stretch reminder
+
 
 def new_state():
     now = time.monotonic()
@@ -92,6 +95,17 @@ def new_state():
         "scrolling": False,
         "scroll_ends_at": 0.0,
         "scroll_unroll": 0.0,
+        "config": {},
+        "reminder_schedule": [],  # list of {kind, text, interval, next_at}
+        "message_text": "",
+        "message_expires_at": 0.0,
+        "pinned_message": "",
+        "pomodoro_enabled": False,
+        "pomodoro_phase": "off",  # off | focus | break
+        "pomodoro_phase_ends_at": 0.0,
+        "pomodoro_focus_s": 0.0,
+        "pomodoro_break_s": 0.0,
+        "pomodoro_cycles": 0,
         "prev_window_pos": (100, 100),
         "drag_vx": 0.0,
         "drag_vy": 0.0,
