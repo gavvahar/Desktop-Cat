@@ -11,13 +11,14 @@ import time
 
 from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QCursor
-from PySide6.QtWidgets import QLabel, QWidget
+from PySide6.QtWidgets import QApplication, QLabel, QMenu, QWidget
 
 from desktopcat import config as cat_config
 from desktopcat import input as cat_input
 from desktopcat import physics
 from desktopcat import reminders
 from desktopcat import render
+from desktopcat import settings_ui
 from desktopcat import state as st
 
 TICK_MS = 16  # ~60 fps
@@ -62,6 +63,17 @@ def update_bubble(bubble, window, text):
     y = window.y() - bubble.height() - 6
     bubble.move(x, y)
     bubble.show()
+
+
+def show_context_menu(window, global_pos):
+    menu = QMenu()
+    settings_action = menu.addAction("Settings...")
+    quit_action = menu.addAction("Quit")
+    chosen = menu.exec(global_pos)
+    if chosen == settings_action:
+        settings_ui.open_settings_dialog(window)
+    elif chosen == quit_action:
+        QApplication.quit()
 
 
 def is_wsl():
@@ -147,13 +159,7 @@ class CatWindow(QWidget):
         self._keyboard_listener = cat_input.start_keyboard_listener(self.state)
         self._scroll_listener = cat_input.start_scroll_listener(self.state)
 
-        config = cat_config.load_config()
-        now = time.monotonic()
-        self.state["config"] = config
-        self.state["reminder_schedule"] = reminders.build_reminder_schedule(config, now)
-        self.state["pinned_message"] = config["reminders"]["pinned_message"]
-        if config["pomodoro"]["enabled"]:
-            reminders.start_pomodoro(self.state, config, now)
+        settings_ui.apply_config(self, cat_config.load_config())
 
         self._bubble = create_bubble()
 
@@ -165,6 +171,9 @@ class CatWindow(QWidget):
         render.paint(self, self.state, time.monotonic())
 
     def mousePressEvent(self, event):
+        if event.button() == Qt.MouseButton.RightButton:
+            show_context_menu(self, event.globalPosition().toPoint())
+            return
         global_pos = (event.globalPosition().x(), event.globalPosition().y())
         cat_input.start_drag(self.state, global_pos, self.state["window_pos"])
         physics.on_pick_up(self.state)

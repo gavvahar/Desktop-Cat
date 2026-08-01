@@ -72,7 +72,10 @@ def draw_cat(painter, state, width, height, now):
     pose = state["pose"]
     cx = width / 2
     base_y = height * 0.85
-    fur_color = _tint(FUR, FUR_HOT, state["heat"])
+    config = state["config"]
+    custom_fur = config.get("fur_color") if config else None
+    base_fur = QColor(*custom_fur) if custom_fur else FUR
+    fur_color = _tint(base_fur, FUR_HOT, state["heat"])
 
     body_h = height * 0.42 * (1.0 - 0.35 * pose["crouch"])
     body_w = width * 0.62 * (1.0 + 0.12 * pose["crouch"])
@@ -92,6 +95,9 @@ def draw_cat(painter, state, width, height, now):
     head_cy = body_top - head_r * 0.55
     _draw_ears(painter, cx, head_cy, head_r, pose["ear_flatten"], fur_color)
     _draw_head(painter, cx, head_cy, head_r, fur_color)
+    if config and config.get("pattern") == "tabby":
+        stripe_color = _tint(base_fur, QColor(0, 0, 0), 0.35)
+        _draw_stripes(painter, cx, base_y, body_w, body_h, head_cy, head_r, stripe_color)
     _draw_face(painter, state, cx, head_cy, head_r, now)
     _draw_steam_particles(painter, state["steam_particles"], cx, head_cy - head_r * 1.05)
 
@@ -100,7 +106,7 @@ def _draw_body(painter, cx, base_y, w, h, fur_color):
     path = QPainterPath()
     rect = QRectF(cx - w / 2, base_y - h, w, h)
     path.addRoundedRect(rect, w * 0.35, h * 0.35)
-    painter.setPen(QPen(OUTLINE, 2))
+    painter.setPen(NO_PEN)
     painter.setBrush(QBrush(fur_color))
     painter.drawPath(path)
 
@@ -116,7 +122,7 @@ def _draw_paws(painter, cx, base_y, body_w, forward, knead_l, knead_r):
     lift_y = forward * body_w * 0.28
     knead_amount = body_w * 0.10
 
-    painter.setPen(QPen(OUTLINE, 2))
+    painter.setPen(NO_PEN)
     painter.setBrush(QBrush(BELLY))
     for side, knead in ((-1, knead_l), (1, knead_r)):
         px = cx + side * offset_x
@@ -154,7 +160,7 @@ def _draw_scroll(painter, cx, base_y, body_w, unroll):
 
 def _draw_ears(painter, cx, head_cy, r, flatten, fur_color):
     ear_size = r * 0.65
-    painter.setPen(QPen(OUTLINE, 2))
+    painter.setPen(NO_PEN)
     painter.setBrush(QBrush(fur_color))
     for side in (-1, 1):
         base_x = cx + side * r * 0.62
@@ -181,7 +187,7 @@ def _draw_ears(painter, cx, head_cy, r, flatten, fur_color):
 
 
 def _draw_head(painter, cx, head_cy, r, fur_color):
-    painter.setPen(QPen(OUTLINE, 2))
+    painter.setPen(NO_PEN)
     painter.setBrush(QBrush(fur_color))
     painter.drawEllipse(QPointF(cx, head_cy), r, r * 0.92)
 
@@ -189,6 +195,30 @@ def _draw_head(painter, cx, head_cy, r, fur_color):
     painter.setPen(NO_PEN)
     painter.setBrush(QBrush(BELLY))
     painter.drawEllipse(muzzle)
+
+
+def _draw_stripes(painter, cx, base_y, body_w, body_h, head_cy, head_r, stripe_color):
+    """Phase 6: tabby pattern-swap -- a few short strokes, palette-aware
+    (derived from the current fur color, not a fixed color)."""
+    painter.setBrush(Qt.BrushStyle.NoBrush)
+    painter.setPen(_round_pen(stripe_color, body_w * 0.05))
+
+    for i in range(3):
+        sx = cx - body_w * 0.26 + body_w * 0.26 * i
+        top_y = base_y - body_h * 0.62
+        path = QPainterPath()
+        path.moveTo(sx, top_y)
+        path.quadTo(sx + body_w * 0.06, top_y + body_h * 0.14, sx + body_w * 0.03, top_y + body_h * 0.26)
+        painter.drawPath(path)
+
+    painter.drawLine(
+        QPointF(cx - head_r * 0.18, head_cy - head_r * 0.55),
+        QPointF(cx - head_r * 0.05, head_cy - head_r * 0.35),
+    )
+    painter.drawLine(
+        QPointF(cx + head_r * 0.18, head_cy - head_r * 0.55),
+        QPointF(cx + head_r * 0.05, head_cy - head_r * 0.35),
+    )
 
 
 def _draw_face(painter, state, cx, head_cy, r, now):
@@ -272,9 +302,7 @@ def _draw_tail(painter, cx, base_y, body_w, now, mood, fur_color):
     tip = QPointF(root_x + body_w * (0.10 + wag * 0.6), root_y - body_w * 0.85)
     path.cubicTo(ctrl1, ctrl2, tip)
 
-    painter.setPen(_round_pen(OUTLINE, body_w * 0.16))
-    painter.drawPath(path)
-    painter.setPen(_round_pen(fur_color, body_w * 0.12))
+    painter.setPen(_round_pen(fur_color, body_w * 0.16))
     painter.drawPath(path)
 
 

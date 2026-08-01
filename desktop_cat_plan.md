@@ -78,9 +78,9 @@ A free, open-source pixel-cat desktop companion (Comnyang-style) built in
 
 ### Phase 6 — Personalization
 
-- [ ] Color + pattern **palette-swap** on a base sprite at runtime
-- [ ] "Tell your name" → use it in reminders/breaks
-- [ ] Settings window + persist to a local config file (JSON/TOML)
+- [x] Color + pattern **palette-swap** on a base sprite at runtime
+- [x] "Tell your name" → use it in reminders/breaks
+- [x] Settings window + persist to a local config file (JSON/TOML)
 
 ### Phase 7 — Advanced
 
@@ -118,5 +118,5 @@ A free, open-source pixel-cat desktop companion (Comnyang-style) built in
 
 ## Next action
 
-Phase 6: **personalization** -- palette-swap, "tell your name", and a
-settings window that persists to config.json.
+Phase 7: **advanced** -- peek mode (fullscreen video detection) and
+best-effort AI-agent hooks.

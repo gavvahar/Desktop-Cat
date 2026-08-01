@@ -9,10 +9,13 @@ mask, procedural drawing, eye-follow, drag, keyboard stub), **Phase 1**
 (mochi drag squash/stretch/wobble, gravity to rest on the screen bottom),
 **Phase 3** (kneading paw animation on keypress, overheat red tint + steam
 particles on sustained fast typing), **Phase 4** (paper scroll that
-unspools while scrolling and re-rolls once you stop), and **Phase 5**
+unspools while scrolling and re-rolls once you stop), **Phase 5**
 (stretch/water/Pomodoro/custom reminders and a pinned message, all shown in
-a floating bubble above the cat; configured via
-`~/.config/desktopcat/config.json`).
+a floating bubble above the cat), and **Phase 6** (custom fur color +
+optional tabby pattern, a name used in reminders, and a right-click
+Settings window -- all persisted to `~/.config/desktopcat/config.json`).
+
+Right-click the cat for Settings / Quit.
 
 ## Code style note
 

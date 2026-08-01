@@ -11,6 +11,7 @@ CONFIG_PATH = os.path.join(CONFIG_DIR, "config.json")
 DEFAULTS = {
     "name": "",
     "fur_color": None,  # [r, g, b] or None for the default palette
+    "pattern": "solid",  # solid | tabby
     "reminders": {
         "stretch": {"enabled": True, "interval_minutes": 30},
         "water": {"enabled": True, "interval_minutes": 45},
