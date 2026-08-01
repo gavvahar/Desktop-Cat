@@ -10,7 +10,7 @@ A free, open-source pixel-cat desktop companion (Comnyang-style) built in
 - A tiny pixel cat that lives as an always-on-top overlay, reacts to mouse /
   keyboard / scroll, and runs stretch / water / Pomodoro reminders.
 - **Free forever.** No purchase flow, no license server, no telemetry.
-- Ship as source on GitHub + an AppImage or Flatpak.
+- Ship as source on GitHub + an AppImage.
 
 ## Stack
 
@@ -19,7 +19,7 @@ A free, open-source pixel-cat desktop companion (Comnyang-style) built in
 | App framework | PySide6 (Qt)                                    | Python-first, light RAM, good transparent-window support |
 | Rendering     | QPainter (procedural now) → sprite sheets later | Start asset-free, swap in art                            |
 | Global input  | `pynput` (X11) / `python-evdev` (Wayland)       | Reacts to input anywhere on screen                       |
-| Packaging     | AppImage or Flatpak (Flathub)                   | Standard Linux distribution                              |
+| Packaging     | AppImage                                        | Standard Linux distribution                              |
 | Art tool      | Aseprite (or commission)                        | Pixel sprite sheets + palette maps                       |
 
 ## The hard parts (read before building)
@@ -90,7 +90,7 @@ A free, open-source pixel-cat desktop companion (Comnyang-style) built in
 ### Phase 8 — Ship
 
 - [ ] Settings persistence + autostart entry
-- [x] Package as AppImage and/or Flatpak (AppImage done: `packaging/appimage/build.sh`; Flatpak not started)
+- [x] Package as AppImage (`packaging/appimage/build.sh`)
 - [ ] GitHub repo + README + LICENSE (MIT = permissive, GPL = keeps forks open)
 - [ ] Draw/commission original sprite art (do NOT copy Comnyang's assets)
 
