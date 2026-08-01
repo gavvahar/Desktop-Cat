@@ -61,6 +61,10 @@ STEAM_LIFE_MAX = 1.3
 STEAM_DRIFT_MIN = 18.0  # px/s upward
 STEAM_DRIFT_MAX = 34.0
 
+# -- tuning constants (Phase 4: paper unroll on scroll) ---------------------
+SCROLL_HOLD = 0.35  # seconds a scroll event keeps the unroll envelope up
+SCROLL_ENVELOPE_SPEED = 8.0  # per second, unroll/re-roll rate
+
 
 def new_state():
     now = time.monotonic()
@@ -85,6 +89,9 @@ def new_state():
         "key_press_times": [],
         "heat": 0.0,
         "steam_particles": [],  # list of {dx, rise, age, life, drift_speed}
+        "scrolling": False,
+        "scroll_ends_at": 0.0,
+        "scroll_unroll": 0.0,
         "prev_window_pos": (100, 100),
         "drag_vx": 0.0,
         "drag_vy": 0.0,

@@ -182,6 +182,44 @@ def update_steam_particles(state, dt):
         )
 
 
+def on_scroll(state, now):
+    state["scrolling"] = True
+    state["scroll_ends_at"] = now + st.SCROLL_HOLD
+
+
+def update_scrolling(state, now):
+    if state["scrolling"] and now >= state["scroll_ends_at"]:
+        state["scrolling"] = False
+
+
+def update_scroll_anim(state, dt):
+    target = 1.0 if state["scrolling"] else 0.0
+    lerp = min(1.0, dt * st.SCROLL_ENVELOPE_SPEED)
+    state["scroll_unroll"] += (target - state["scroll_unroll"]) * lerp
+
+
+def start_scroll_listener(state):
+    """Global scroll capture for the paper-unroll reaction. X11-only for
+    now, same caveat as the keyboard listener.
+    """
+    try:
+        from pynput import mouse
+    except Exception as exc:
+        print(f"[desktopcat] scroll reactions disabled: {exc}")
+        return None
+
+    def _on_scroll(_x, _y, _dx, _dy):
+        on_scroll(state, time.monotonic())
+
+    listener = mouse.Listener(on_scroll=_on_scroll)
+    try:
+        listener.start()
+    except Exception as exc:
+        print(f"[desktopcat] scroll reactions disabled: {exc}")
+        return None
+    return listener
+
+
 def start_keyboard_listener(state):
     """Global keyboard capture for the kneading reaction (Phase 0 stub,
     upgraded in Phase 3). X11-only for now -- see plan's "hard parts" note

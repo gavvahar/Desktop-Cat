@@ -66,6 +66,8 @@ def tick(window):
     cat_input.update_kneading_anim(state, dt)
     cat_input.update_heat(state, now, dt)
     cat_input.update_steam_particles(state, dt)
+    cat_input.update_scrolling(state, now)
+    cat_input.update_scroll_anim(state, dt)
     cat_input.update_pose(state, dt)
 
     window.update()
@@ -95,6 +97,7 @@ class CatWindow(QWidget):
         self.state["floor_y"] = start_pos[1]
 
         self._keyboard_listener = cat_input.start_keyboard_listener(self.state)
+        self._scroll_listener = cat_input.start_scroll_listener(self.state)
 
         self._timer = QTimer(self)
         self._timer.timeout.connect(lambda: tick(self))

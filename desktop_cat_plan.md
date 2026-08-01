@@ -66,7 +66,7 @@ A free, open-source pixel-cat desktop companion (Comnyang-style) built in
 
 ### Phase 4 — Scroll
 
-- [ ] **Paper unroll** — scroll events → unspool/re-roll paper animation
+- [x] **Paper unroll** — scroll events → unspool/re-roll paper animation
 
 ### Phase 5 — Timers & reminders (pure Python — easy wins)
 
@@ -118,5 +118,5 @@ A free, open-source pixel-cat desktop companion (Comnyang-style) built in
 
 ## Next action
 
-Phase 4: **paper unroll**, reacting to scroll events with an unspool/re-roll
-animation.
+Phase 5: **timers & reminders** -- stretch, drink-water, Pomodoro, and
+custom message reminders, plus a pinned message above the cat.

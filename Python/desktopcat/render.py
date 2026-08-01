@@ -19,6 +19,9 @@ PINK = QColor(255, 168, 178)
 EYE_WHITE = QColor(255, 255, 255)
 EYE_PUPIL = QColor(35, 25, 20)
 STEAM = QColor(235, 235, 240)
+PAPER = QColor(250, 240, 210)
+PAPER_ROLL = QColor(228, 210, 172)
+PAPER_LINE = QColor(184, 152, 104)
 
 NO_PEN = QPen(Qt.PenStyle.NoPen)
 
@@ -83,6 +86,7 @@ def draw_cat(painter, state, width, height, now):
     knead_l = max(0.0, math.sin(phase)) * envelope
     knead_r = max(0.0, math.sin(phase + math.pi)) * envelope
     _draw_paws(painter, cx, base_y, body_w, pose["paws_forward"], knead_l, knead_r)
+    _draw_scroll(painter, cx, base_y, body_w, state["scroll_unroll"])
 
     head_r = width * 0.30
     head_cy = body_top - head_r * 0.55
@@ -119,6 +123,33 @@ def _draw_paws(painter, cx, base_y, body_w, forward, knead_l, knead_r):
         py = base_y - paw_h / 2 + lift_y * 0.2 - knead * knead_amount
         rect = QRectF(px - paw_w / 2, py - paw_h / 2 - forward * 6, paw_w, paw_h)
         painter.drawEllipse(rect)
+
+
+def _draw_scroll(painter, cx, base_y, body_w, unroll):
+    """Phase 4: a small paper scroll beside the cat that unspools while
+    scrolling and re-rolls once scrolling stops."""
+    root_x = cx - body_w * 0.45
+    root_y = base_y - body_w * 0.12
+    roll_r = body_w * 0.09
+    unroll_len = unroll * body_w * 0.25
+
+    if unroll_len > 0.5:
+        strip = QRectF(root_x - unroll_len, root_y - roll_r, unroll_len, roll_r * 2)
+        painter.setPen(QPen(OUTLINE, 1.5))
+        painter.setBrush(QBrush(PAPER))
+        painter.drawRoundedRect(strip, roll_r * 0.4, roll_r * 0.4)
+
+        painter.setPen(QPen(PAPER_LINE, 1))
+        for frac in (0.35, 0.65):
+            line_y = strip.top() + strip.height() * frac
+            painter.drawLine(
+                QPointF(strip.left() + roll_r * 0.3, line_y),
+                QPointF(strip.right() - roll_r * 0.3, line_y),
+            )
+
+    painter.setPen(QPen(OUTLINE, 1.5))
+    painter.setBrush(QBrush(PAPER_ROLL))
+    painter.drawEllipse(QPointF(root_x, root_y), roll_r, roll_r * 1.3)
 
 
 def _draw_ears(painter, cx, head_cy, r, flatten, fur_color):

@@ -6,9 +6,10 @@ See [desktop_cat_plan.md](desktop_cat_plan.md) for the full build plan.
 Currently implemented: **Phase 0** (transparent always-on-top window, click-through
 mask, procedural drawing, eye-follow, drag, keyboard stub), **Phase 1**
 (mouse-hunt, pet-to-purr, eased eye-follow, idle blink), **Phase 2**
-(mochi drag squash/stretch/wobble, gravity to rest on the screen bottom), and
+(mochi drag squash/stretch/wobble, gravity to rest on the screen bottom),
 **Phase 3** (kneading paw animation on keypress, overheat red tint + steam
-particles on sustained fast typing).
+particles on sustained fast typing), and **Phase 4** (paper scroll that
+unspools while scrolling and re-rolls once you stop).
 
 ## Code style note
 
