@@ -53,18 +53,33 @@ have that restriction; `pynput` also skips the Linux-only `evdev`
 dependency there entirely (native Win32 hooks instead), so there's no
 compiler/kernel-headers setup needed either.
 
-From a regular (non-WSL) **Command Prompt or PowerShell**, using a native
-Windows Python (not the one inside WSL):
+Verified working end-to-end on real Windows: PySide6/pynput install and
+import cleanly, the app launches, and `QCursor.pos()` genuinely tracks the
+mouse across the whole desktop (unlike the WSLg restriction above).
+
+**Install** (from a regular, non-WSL PowerShell, in the repo root):
+
+```
+.\install.ps1
+```
+
+**Run:**
+
+```
+.\run.ps1
+```
+
+If PowerShell blocks the scripts (`running scripts is disabled on this
+system`), run once: `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`,
+or invoke directly with `powershell -ExecutionPolicy Bypass -File .\install.ps1`.
+
+Equivalent by hand, without the scripts:
 
 ```
 pip install -r requirements.txt
-cd Python
+$env:PYTHONPATH = "Python"
 python -m desktopcat.main
 ```
-
-This hasn't been run/verified on an actual Windows machine yet -- if
-something doesn't work, it's most likely a Qt platform-plugin quirk
-specific to Windows rather than anything WSL-related.
 
 ## Run with Docker / Podman
 
