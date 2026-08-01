@@ -24,6 +24,10 @@ asset-free procedural (QPainter) until someone draws or commissions it.
 
 Right-click the cat for Settings / Quit.
 
+**Just want to install it?** See [INSTALL.md](INSTALL.md) for
+download-and-run instructions on every platform. Everything below this
+point is about building from source.
+
 ## Code style note
 
 No custom classes are used in the Python files. The one exception is
@@ -103,12 +107,7 @@ If you'd rather not `pip install` anything, `packaging/windows/build.ps1`
 builds a portable `desktop-cat` folder -- no Python setup needed. This is
 the Windows equivalent of the Linux AppImage below; there's no
 cross-platform way to build it, so it has to be built (or downloaded
-prebuilt from a release) on an actual Windows machine.
-
-Prebuilt `Desktop-Cat-windows.zip` releases are on the
-[Releases page](https://github.com/gavvahar/Desktop-Cat/releases) --
-download, extract, and run `desktop-cat.exe` from inside the extracted
-folder.
+prebuilt -- see [INSTALL.md](INSTALL.md)) on an actual Windows machine.
 
 **Why a zip of a folder instead of a single .exe:** it used to be a single
 PyInstaller `--onefile` executable, but that got flagged by Windows
@@ -139,10 +138,7 @@ the generated `.spec` are gitignored.
 
 ## Linux: AppImage
 
-Prebuilt `Desktop-Cat-x86_64.AppImage` releases are on the
-[Releases page](https://github.com/gavvahar/Desktop-Cat/releases) -- download,
-`chmod +x`, and run it, no install step needed.
-
+See [INSTALL.md](INSTALL.md) for downloading and running a prebuilt one.
 To build it yourself from source:
 
 ```
@@ -156,28 +152,32 @@ first run (cached in `packaging/appimage/.tools/`), and produces
 (`build.sh`, `AppRun`, `desktop-cat.desktop`, `desktop-cat.png`) are tracked
 in git -- everything else the script generates is gitignored.
 
-## Linux: Flatpak (unverified locally -- CI-built)
+## Linux: Flatpak
 
 `packaging/flatpak/io.github.gavvahar.DesktopCat.yml` is a full Flatpak
-manifest, but it hasn't been built locally -- `flatpak-builder` needs a
-`sudo` install plus multi-GB runtime downloads that weren't practical in
-the environment this was written in. Instead, `.github/workflows/release.yml`
-builds it on a real Linux CI runner via the standard
+manifest. It's built by `.github/workflows/release.yml` on a real Linux CI
+runner via the standard
 [flatpak-github-actions](https://github.com/flatpak/flatpak-github-actions)
-action, so at least the _build step_ is verified there. Check the Actions
-tab for the `build-flatpak` job's status.
+action (build succeeding there is how every release's `Desktop-Cat.flatpak`
+gets made) -- it hasn't been built locally, since `flatpak-builder` needs a
+`sudo` install plus multi-GB runtime downloads that weren't practical in
+the environment this was originally written in. See
+[INSTALL.md](INSTALL.md) for the `flatpak install` command.
 
 A few things worth knowing:
 
 - Runtime is `org.freedesktop.Platform`, not a KDE/Qt runtime -- PySide6's
   wheels bundle their own Qt, so a Qt-flavored runtime would just mean two
   copies of Qt on disk.
-- Dependency wheels/sdists (PySide6, pynput, and their sub-dependencies)
-  are pinned by URL + sha256 directly in the manifest, since Flatpak builds
-  run offline and need every source pre-declared. `evdev` (a pynput
-  dependency) builds from source and needs `linux/input.h` -- same
-  requirement noted in the AppImage build's comments -- which is untested
-  against `org.freedesktop.Sdk`'s headers.
+- Dependency wheels are pinned by URL + sha256 directly in the manifest,
+  since Flatpak builds run offline and need every source pre-declared.
+  `pynput` is installed with `--no-deps` plus explicit `python-xlib`/`six`,
+  deliberately excluding its `evdev` dependency (the Wayland-fallback
+  backend) -- this build only grants X11 access, not raw `/dev/input`
+  access, so evdev couldn't do anything here even if it built, and its
+  `pyproject.toml` doesn't build cleanly against modern setuptools anyway
+  (an old-style `license = "BSD-3-Clause"` string fails PEP 621
+  validation).
 - Needs `--socket=x11` specifically (not just the more sandboxed
   `--socket=fallback-x11`) for `pynput`'s global keyboard/mouse capture to
   work at all; under pure Wayland without that, those reactions fail to
@@ -212,15 +212,9 @@ confirmed by anyone yet. Two known gaps:
   reactions silently do nothing (same graceful-disable behavior as any
   other listener failure).
 
-Prebuilt `Desktop-Cat-macos.zip` releases are on the
-[Releases page](https://github.com/gavvahar/Desktop-Cat/releases). The app
-inside is unsigned (no Apple Developer account involved in this project),
-so a plain double-click will be blocked by Gatekeeper ("can't be opened
-because Apple cannot check it for malicious software"). Right-click the
-app -> Open -> Open, once, to bypass that.
-
-To build it yourself (must be run **on** macOS -- PyInstaller can't
-cross-compile):
+See [INSTALL.md](INSTALL.md) for downloading and running a prebuilt one
+(including the Gatekeeper right-click-Open step). To build it yourself
+(must be run **on** macOS -- PyInstaller can't cross-compile):
 
 ```
 bash packaging/macos/build.sh
