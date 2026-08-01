@@ -20,3 +20,9 @@ packaging/appimage/*.AppImage
 packaging/windows/build/
 packaging/windows/dist/
 packaging/windows/*.spec
+
+# macOS .app build artifacts (packaging/macos/build.sh regenerates these;
+# only the source files -- build.sh, desktop-cat.icns -- are tracked)
+packaging/macos/build/
+packaging/macos/dist/
+packaging/macos/*.spec

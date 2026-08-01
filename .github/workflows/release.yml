@@ -122,8 +122,29 @@ jobs:
           path: packaging/windows/dist/desktop-cat.exe
           if-no-files-found: error
 
+  build-macos-app:
+    needs: version
+    if: needs.version.outputs.skip == 'false'
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Build macOS app
+        run: bash packaging/macos/build.sh
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macos-app
+          path: packaging/macos/dist/Desktop-Cat-macos.zip
+          if-no-files-found: error
+
   release:
-    needs: [version, build-appimage, build-windows-exe]
+    needs: [version, build-appimage, build-windows-exe, build-macos-app]
     if: needs.version.outputs.skip == 'false'
     runs-on: ubuntu-latest
     permissions:
@@ -143,6 +164,11 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: windows-exe
+          path: dist-assets
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: macos-app
           path: dist-assets
 
       - name: Generate changelog from commits
@@ -197,4 +223,5 @@ jobs:
             --title "${{ needs.version.outputs.tag }}" \
             --notes-file /tmp/release_notes.md \
             dist-assets/Desktop-Cat-x86_64.AppImage \
-            dist-assets/desktop-cat.exe
+            dist-assets/desktop-cat.exe \
+            dist-assets/Desktop-Cat-macos.zip

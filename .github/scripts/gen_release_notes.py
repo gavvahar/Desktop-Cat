@@ -30,6 +30,7 @@ CATEGORY_ORDER = [
 RELEASE_ASSETS = [
     ("🪟 Windows", "desktop-cat.exe"),
     ("🐧 Linux (AppImage)", "Desktop-Cat-x86_64.AppImage"),
+    ("🍎 macOS (unsigned -- see README)", "Desktop-Cat-macos.zip"),
 ]
 
 context_path = sys.argv[1]

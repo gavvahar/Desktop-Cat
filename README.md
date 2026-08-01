@@ -135,3 +135,38 @@ first run (cached in `packaging/appimage/.tools/`), and produces
 `packaging/appimage/Desktop-Cat-x86_64.AppImage`. Only the source files
 (`build.sh`, `AppRun`, `desktop-cat.desktop`, `desktop-cat.png`) are tracked
 in git -- everything else the script generates is gitignored.
+
+## macOS: .app bundle (unverified -- see caveats)
+
+**Nothing about macOS has been tested on real hardware.** Everything below
+is reasoned through and, where possible, built by CI on GitHub's hosted
+`macos-latest` runner (so at least the *packaging step* is verified to
+succeed) -- but actually running/using the app on a Mac has not been
+confirmed by anyone yet. Two known gaps:
+
+- **Peek mode doesn't work on macOS.** It's implemented via X11 window
+  properties (`python-xlib`), and there's no X server on macOS. It fails
+  safely -- the feature just never triggers -- rather than crashing.
+- `pynput`'s keyboard/scroll listeners need the app to be granted
+  **Accessibility permission** (System Settings -> Privacy & Security ->
+  Accessibility) before they'll receive any events. Without it, those
+  reactions silently do nothing (same graceful-disable behavior as any
+  other listener failure).
+
+Prebuilt `Desktop-Cat-macos.zip` releases are on the
+[Releases page](https://github.com/gavvahar/Desktop-Cat/releases). The app
+inside is unsigned (no Apple Developer account involved in this project),
+so a plain double-click will be blocked by Gatekeeper ("can't be opened
+because Apple cannot check it for malicious software"). Right-click the
+app -> Open -> Open, once, to bypass that.
+
+To build it yourself (must be run **on** macOS -- PyInstaller can't
+cross-compile):
+
+```
+bash packaging/macos/build.sh
+```
+
+This produces `packaging/macos/dist/Desktop Cat.app`, zipped as
+`packaging/macos/dist/Desktop-Cat-macos.zip`. Only the source files
+(`build.sh`, `desktop-cat.icns`) are tracked in git.
