@@ -118,8 +118,7 @@ A free, open-source pixel-cat desktop companion (Comnyang-style) built in
 
 ## Next action
 
-All planned phases are implemented except **original sprite art** (Phase
-8) -- a creative/licensing decision for a human to make, not something to
+All planned phases are implemented except **original sprite art** (Phase 8) -- a creative/licensing decision for a human to make, not something to
 auto-generate. Everything else is code-complete; what's left is testing on
 real hardware/displays (most of this was built and verified headlessly),
 tuning based on how it actually feels to use, and eventually replacing the

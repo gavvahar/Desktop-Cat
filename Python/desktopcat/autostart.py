@@ -53,13 +53,7 @@ def _set_linux_autostart(enabled):
     # to re-invoking this same Python interpreter otherwise.
     command = os.environ.get("APPIMAGE") or f"{sys.executable} -m desktopcat.main"
     with open(path, "w") as fh:
-        fh.write(
-            "[Desktop Entry]\n"
-            "Type=Application\n"
-            "Name=Desktop Cat\n"
-            f"Exec={command}\n"
-            "X-GNOME-Autostart-enabled=true\n"
-        )
+        fh.write(f"[Desktop Entry]\nType=Application\nName=Desktop Cat\nExec={command}\nX-GNOME-Autostart-enabled=true\n")
 
 
 def _set_macos_autostart(enabled):
@@ -96,9 +90,7 @@ def _set_windows_autostart(enabled):
     try:
         import winreg
 
-        with winreg.OpenKey(
-            winreg.HKEY_CURRENT_USER, r"Software\Microsoft\Windows\CurrentVersion\Run", 0, winreg.KEY_ALL_ACCESS
-        ) as key:
+        with winreg.OpenKey(winreg.HKEY_CURRENT_USER, r"Software\Microsoft\Windows\CurrentVersion\Run", 0, winreg.KEY_ALL_ACCESS) as key:
             if enabled:
                 winreg.SetValueEx(key, AUTOSTART_NAME, 0, winreg.REG_SZ, sys.executable)
             else:
