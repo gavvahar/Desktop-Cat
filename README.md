@@ -38,6 +38,34 @@ python -m desktopcat.main
 with `Python/` on your `PYTHONPATH` (e.g. `PYTHONPATH=Python python -m desktopcat.main`),
 or `cd Python && python -m desktopcat.main`.
 
+## Running natively on Windows (not WSL)
+
+The app is plain PySide6 + pynput with no Linux-specific code (the one
+platform check, in `window.py`, safely no-ops on Windows), so it should run
+unmodified with a native Windows Python install. This is also the better
+way to test cursor/keyboard reactions: **if you're running this inside
+WSL/WSLg, global cursor tracking only works while the pointer is directly
+over the cat's own window** -- WSLg forwards windows individually over RDP
+rather than exposing the real Windows desktop, so `QCursor.pos()` never
+sees the cursor anywhere else and reactions like mouse-hunt/pet-to-purr
+won't trigger from elsewhere on screen. A native Windows install doesn't
+have that restriction; `pynput` also skips the Linux-only `evdev`
+dependency there entirely (native Win32 hooks instead), so there's no
+compiler/kernel-headers setup needed either.
+
+From a regular (non-WSL) **Command Prompt or PowerShell**, using a native
+Windows Python (not the one inside WSL):
+
+```
+pip install -r requirements.txt
+cd Python
+python -m desktopcat.main
+```
+
+This hasn't been run/verified on an actual Windows machine yet -- if
+something doesn't work, it's most likely a Qt platform-plugin quirk
+specific to Windows rather than anything WSL-related.
+
 ## Run with Docker / Podman
 
 The cat is a GUI app, so the container needs access to your **host's X11
