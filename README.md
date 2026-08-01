@@ -82,3 +82,22 @@ python -m desktopcat.main
 ```
 
 No network access is required or requested by the app.
+
+## Linux: AppImage
+
+Prebuilt `Desktop-Cat-x86_64.AppImage` releases are on the
+[Releases page](https://github.com/gavvahar/Desktop-Cat/releases) -- download,
+`chmod +x`, and run it, no install step needed.
+
+To build it yourself from source:
+
+```
+bash packaging/appimage/build.sh
+```
+
+This installs PyInstaller, bundles the app and all its dependencies (PySide6,
+pynput, etc.) into `packaging/appimage/dist/`, downloads `appimagetool` on
+first run (cached in `packaging/appimage/.tools/`), and produces
+`packaging/appimage/Desktop-Cat-x86_64.AppImage`. Only the source files
+(`build.sh`, `AppRun`, `desktop-cat.desktop`, `desktop-cat.png`) are tracked
+in git -- everything else the script generates is gitignored.

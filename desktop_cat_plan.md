@@ -90,7 +90,7 @@ A free, open-source pixel-cat desktop companion (Comnyang-style) built in
 ### Phase 8 — Ship
 
 - [ ] Settings persistence + autostart entry
-- [ ] Package as AppImage and/or Flatpak
+- [x] Package as AppImage and/or Flatpak (AppImage done: `packaging/appimage/build.sh`; Flatpak not started)
 - [ ] GitHub repo + README + LICENSE (MIT = permissive, GPL = keeps forks open)
 - [ ] Draw/commission original sprite art (do NOT copy Comnyang's assets)
 

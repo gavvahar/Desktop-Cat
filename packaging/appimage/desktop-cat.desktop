@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Desktop Cat
+Comment=A pixel-cat desktop companion
+Exec=desktop-cat
+Icon=desktop-cat
+Categories=Utility;
+Terminal=false

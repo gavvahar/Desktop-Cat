@@ -4,3 +4,13 @@ __pycache__/
 *.py[cod]
 node_modules
 .vscode
+
+# AppImage build artifacts (packaging/appimage/build.sh regenerates these;
+# only the source files -- AppRun, desktop-cat.desktop, desktop-cat.png,
+# build.sh itself -- are tracked)
+packaging/appimage/.tools/
+packaging/appimage/build/
+packaging/appimage/dist/
+packaging/appimage/AppDir/
+packaging/appimage/*.spec
+packaging/appimage/*.AppImage
