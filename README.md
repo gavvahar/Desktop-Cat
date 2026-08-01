@@ -17,7 +17,10 @@ Settings window -- all persisted to `~/.config/desktopcat/config.json`), and
 **Phase 7** (peek mode: slides to the screen edge and mutes reactions when
 a fullscreen window is active, X11-only best-effort; and best-effort
 "AI-agent" hooks -- a little thinking-along animation while a known AI
-coding tool process is running, and a done-jump when it exits).
+coding tool process is running, and a done-jump when it exits), and most
+of **Phase 8** (autostart at login, toggled from Settings; MIT-licensed).
+Original sprite art is the one thing left undone -- the app stays
+asset-free procedural (QPainter) until someone draws or commissions it.
 
 Right-click the cat for Settings / Quit.
 

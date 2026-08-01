@@ -10,6 +10,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtGui import QColor
 from PySide6.QtWidgets import QCheckBox, QColorDialog, QComboBox, QDialog, QDialogButtonBox, QFormLayout, QLineEdit, QPushButton, QSpinBox
 
+from desktopcat import autostart
 from desktopcat import config as cat_config
 from desktopcat import reminders
 
@@ -86,6 +87,10 @@ def open_settings_dialog(window):
     layout.addRow("  focus (minutes):", focus_spin)
     layout.addRow("  break (minutes):", break_spin)
 
+    autostart_check = QCheckBox("Start automatically at login")
+    autostart_check.setChecked(autostart.is_enabled())
+    layout.addRow(autostart_check)
+
     buttons = QDialogButtonBox(QDialogButtonBox.StandardButton.Save | QDialogButtonBox.StandardButton.Cancel)
     layout.addRow(buttons)
 
@@ -108,6 +113,7 @@ def open_settings_dialog(window):
         }
         cat_config.save_config(new_config)
         apply_config(window, new_config)
+        autostart.set_enabled(autostart_check.isChecked())
         dialog.accept()
 
     buttons.accepted.connect(_save)

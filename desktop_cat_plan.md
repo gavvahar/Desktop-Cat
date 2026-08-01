@@ -89,10 +89,10 @@ A free, open-source pixel-cat desktop companion (Comnyang-style) built in
 
 ### Phase 8 — Ship
 
-- [ ] Settings persistence + autostart entry
+- [x] Settings persistence (`config.json`, Phase 6) + autostart entry (`Python/desktopcat/autostart.py`: XDG autostart on Linux, Run registry key on Windows, toggled from Settings)
 - [x] Package as AppImage (`packaging/appimage/build.sh`)
-- [ ] GitHub repo + README + LICENSE (MIT = permissive, GPL = keeps forks open)
-- [ ] Draw/commission original sprite art (do NOT copy Comnyang's assets)
+- [x] GitHub repo + README + LICENSE (went with MIT -- permissive default; swap to GPL if you'd rather keep forks open)
+- [ ] Draw/commission original sprite art (do NOT copy Comnyang's assets) -- left for you: this is a creative/licensing call, not something to auto-generate. The app stays asset-free procedural (QPainter) until then.
 
 ---
 
@@ -118,5 +118,9 @@ A free, open-source pixel-cat desktop companion (Comnyang-style) built in
 
 ## Next action
 
-Phase 8: **ship** -- settings persistence + autostart entry, GitHub repo +
-README + LICENSE, and original sprite art.
+All planned phases are implemented except **original sprite art** (Phase
+8) -- a creative/licensing decision for a human to make, not something to
+auto-generate. Everything else is code-complete; what's left is testing on
+real hardware/displays (most of this was built and verified headlessly),
+tuning based on how it actually feels to use, and eventually replacing the
+procedural QPainter cat with real sprite sheets once art exists.
