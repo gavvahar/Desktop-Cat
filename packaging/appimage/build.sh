@@ -46,6 +46,9 @@ mkdir -p "$PKG_DIR/AppDir/usr/share/applications" "$PKG_DIR/AppDir/usr/share/ico
 cp "$PKG_DIR/desktop-cat.desktop" "$PKG_DIR/AppDir/usr/share/applications/desktop-cat.desktop"
 cp "$PKG_DIR/desktop-cat.png" "$PKG_DIR/AppDir/usr/share/icons/hicolor/512x512/apps/desktop-cat.png"
 
-ARCH=x86_64 "$APPIMAGETOOL" "$PKG_DIR/AppDir" "$PKG_DIR/Desktop-Cat-x86_64.AppImage"
+# appimagetool is itself an AppImage and normally mounts via FUSE; CI
+# runners (and some containers) don't have /dev/fuse, so fall back to
+# self-extracting instead. Harmless when FUSE is available too.
+ARCH=x86_64 APPIMAGE_EXTRACT_AND_RUN=1 "$APPIMAGETOOL" "$PKG_DIR/AppDir" "$PKG_DIR/Desktop-Cat-x86_64.AppImage"
 
 echo "Built: $PKG_DIR/Desktop-Cat-x86_64.AppImage"
