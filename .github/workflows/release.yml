@@ -167,7 +167,14 @@ jobs:
           if-no-files-found: error
 
   release:
-    needs: [version, build-appimage, build-windows-exe, build-macos-app, build-flatpak]
+    needs:
+      [
+        version,
+        build-appimage,
+        build-windows-exe,
+        build-macos-app,
+        build-flatpak,
+      ]
     if: needs.version.outputs.skip == 'false'
     runs-on: ubuntu-latest
     permissions:

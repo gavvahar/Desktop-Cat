@@ -164,7 +164,7 @@ manifest, but it hasn't been built locally -- `flatpak-builder` needs a
 the environment this was written in. Instead, `.github/workflows/release.yml`
 builds it on a real Linux CI runner via the standard
 [flatpak-github-actions](https://github.com/flatpak/flatpak-github-actions)
-action, so at least the *build step* is verified there. Check the Actions
+action, so at least the _build step_ is verified there. Check the Actions
 tab for the `build-flatpak` job's status.
 
 A few things worth knowing:
