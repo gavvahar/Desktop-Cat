@@ -50,6 +50,9 @@ def tick(window):
     cat_input.ease_eyes(state, dt)
     cat_input.update_blink(state, now)
     cat_input.update_kneading(state, now)
+    cat_input.update_kneading_anim(state, dt)
+    cat_input.update_heat(state, now, dt)
+    cat_input.update_steam_particles(state, dt)
     cat_input.update_pose(state, dt)
 
     window.update()

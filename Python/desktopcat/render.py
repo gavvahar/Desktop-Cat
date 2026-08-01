@@ -13,10 +13,12 @@ from PySide6.QtWidgets import QWidget
 OUTLINE = QColor(70, 45, 30)
 FUR = QColor(242, 166, 90)
 FUR_DARK = QColor(214, 133, 63)
+FUR_HOT = QColor(214, 62, 48)  # Phase 3: overheat red tint target
 BELLY = QColor(255, 231, 199)
 PINK = QColor(255, 168, 178)
 EYE_WHITE = QColor(255, 255, 255)
 EYE_PUPIL = QColor(35, 25, 20)
+STEAM = QColor(235, 235, 240)
 
 NO_PEN = QPen(Qt.PenStyle.NoPen)
 
@@ -25,6 +27,15 @@ def _round_pen(color, width):
     pen = QPen(color, width)
     pen.setCapStyle(Qt.PenCapStyle.RoundCap)
     return pen
+
+
+def _tint(base, target, t):
+    t = max(0.0, min(1.0, t))
+    return QColor(
+        int(base.red() + (target.red() - base.red()) * t),
+        int(base.green() + (target.green() - base.green()) * t),
+        int(base.blue() + (target.blue() - base.blue()) * t),
+    )
 
 
 def build_click_mask_region(size):
@@ -58,28 +69,35 @@ def draw_cat(painter, state, width, height, now):
     pose = state["pose"]
     cx = width / 2
     base_y = height * 0.85
+    fur_color = _tint(FUR, FUR_HOT, state["heat"])
 
     body_h = height * 0.42 * (1.0 - 0.35 * pose["crouch"])
     body_w = width * 0.62 * (1.0 + 0.12 * pose["crouch"])
     body_top = base_y - body_h
 
-    _draw_tail(painter, cx, base_y, body_w, now, state["mood"])
-    _draw_body(painter, cx, base_y, body_w, body_h)
-    _draw_paws(painter, cx, base_y, body_w, pose["paws_forward"])
+    _draw_tail(painter, cx, base_y, body_w, now, state["mood"], fur_color)
+    _draw_body(painter, cx, base_y, body_w, body_h, fur_color)
+
+    envelope = state["knead_envelope"]
+    phase = state["knead_phase"]
+    knead_l = max(0.0, math.sin(phase)) * envelope
+    knead_r = max(0.0, math.sin(phase + math.pi)) * envelope
+    _draw_paws(painter, cx, base_y, body_w, pose["paws_forward"], knead_l, knead_r)
 
     head_r = width * 0.30
     head_cy = body_top - head_r * 0.55
-    _draw_ears(painter, cx, head_cy, head_r, pose["ear_flatten"])
-    _draw_head(painter, cx, head_cy, head_r)
+    _draw_ears(painter, cx, head_cy, head_r, pose["ear_flatten"], fur_color)
+    _draw_head(painter, cx, head_cy, head_r, fur_color)
     _draw_face(painter, state, cx, head_cy, head_r, now)
+    _draw_steam_particles(painter, state["steam_particles"], cx, head_cy - head_r * 1.05)
 
 
-def _draw_body(painter, cx, base_y, w, h):
+def _draw_body(painter, cx, base_y, w, h, fur_color):
     path = QPainterPath()
     rect = QRectF(cx - w / 2, base_y - h, w, h)
     path.addRoundedRect(rect, w * 0.35, h * 0.35)
     painter.setPen(QPen(OUTLINE, 2))
-    painter.setBrush(QBrush(FUR))
+    painter.setBrush(QBrush(fur_color))
     painter.drawPath(path)
 
     belly = QRectF(cx - w * 0.22, base_y - h * 0.55, w * 0.44, h * 0.55)
@@ -88,24 +106,25 @@ def _draw_body(painter, cx, base_y, w, h):
     painter.drawEllipse(belly)
 
 
-def _draw_paws(painter, cx, base_y, body_w, forward):
+def _draw_paws(painter, cx, base_y, body_w, forward, knead_l, knead_r):
     paw_w, paw_h = body_w * 0.22, body_w * 0.16
     offset_x = body_w * 0.20
     lift_y = forward * body_w * 0.28
+    knead_amount = body_w * 0.10
 
     painter.setPen(QPen(OUTLINE, 2))
     painter.setBrush(QBrush(BELLY))
-    for side in (-1, 1):
+    for side, knead in ((-1, knead_l), (1, knead_r)):
         px = cx + side * offset_x
-        py = base_y - paw_h / 2 + lift_y * 0.2
+        py = base_y - paw_h / 2 + lift_y * 0.2 - knead * knead_amount
         rect = QRectF(px - paw_w / 2, py - paw_h / 2 - forward * 6, paw_w, paw_h)
         painter.drawEllipse(rect)
 
 
-def _draw_ears(painter, cx, head_cy, r, flatten):
+def _draw_ears(painter, cx, head_cy, r, flatten, fur_color):
     ear_size = r * 0.65
     painter.setPen(QPen(OUTLINE, 2))
-    painter.setBrush(QBrush(FUR))
+    painter.setBrush(QBrush(fur_color))
     for side in (-1, 1):
         base_x = cx + side * r * 0.62
         base_y = head_cy - r * 0.55
@@ -127,12 +146,12 @@ def _draw_ears(painter, cx, head_cy, r, flatten):
         inner.closeSubpath()
         painter.setBrush(QBrush(PINK))
         painter.drawPath(inner)
-        painter.setBrush(QBrush(FUR))
+        painter.setBrush(QBrush(fur_color))
 
 
-def _draw_head(painter, cx, head_cy, r):
+def _draw_head(painter, cx, head_cy, r, fur_color):
     painter.setPen(QPen(OUTLINE, 2))
-    painter.setBrush(QBrush(FUR))
+    painter.setBrush(QBrush(fur_color))
     painter.drawEllipse(QPointF(cx, head_cy), r, r * 0.92)
 
     muzzle = QRectF(cx - r * 0.42, head_cy + r * 0.15, r * 0.84, r * 0.55)
@@ -204,7 +223,7 @@ def _draw_closed_eye(painter, ex, ey, w, happy):
     painter.drawPath(path)
 
 
-def _draw_tail(painter, cx, base_y, body_w, now, mood):
+def _draw_tail(painter, cx, base_y, body_w, now, mood, fur_color):
     if mood == "pounce":
         wag = 0.05
     elif mood == "purr":
@@ -224,5 +243,17 @@ def _draw_tail(painter, cx, base_y, body_w, now, mood):
 
     painter.setPen(_round_pen(OUTLINE, body_w * 0.16))
     painter.drawPath(path)
-    painter.setPen(_round_pen(FUR, body_w * 0.12))
+    painter.setPen(_round_pen(fur_color, body_w * 0.12))
     painter.drawPath(path)
+
+
+def _draw_steam_particles(painter, particles, cx, top_y):
+    painter.setPen(NO_PEN)
+    for p in particles:
+        life_frac = p["age"] / p["life"]
+        alpha = (1.0 - life_frac) * 160
+        radius = 3.0 + life_frac * 4.0
+        color = QColor(STEAM)
+        color.setAlpha(max(0, int(alpha)))
+        painter.setBrush(QBrush(color))
+        painter.drawEllipse(QPointF(cx + p["dx"], top_y - p["rise"]), radius, radius)

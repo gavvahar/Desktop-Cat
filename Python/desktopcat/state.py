@@ -43,6 +43,24 @@ GRAVITY = 2200.0  # px/s^2
 MAX_FALL_SPEED = 2600.0  # px/s
 LANDING_SQUASH_SCALE = 0.55  # fraction of MAX_FALL_SPEED -> full landing squash
 
+# -- tuning constants (Phase 3: kneading anim + overheat) -------------------
+KNEADING_HOLD = 0.35  # seconds a keypress keeps the kneading envelope up
+KNEAD_ENVELOPE_SPEED = 10.0  # per second, envelope rise/fall rate
+KNEAD_CYCLE_SPEED = 9.0  # rad/s, paw alternation speed
+
+KEY_RATE_WINDOW = 1.5  # seconds of keypress history kept for rate calc
+OVERHEAT_RATE_MIN = 4.0  # presses/s where heat starts rising
+OVERHEAT_RATE_MAX = 10.0  # presses/s where heat is fully maxed
+HEAT_RISE_SPEED = 2.5  # per second
+HEAT_FALL_SPEED = 0.8  # per second, cools slower than it heats up
+
+STEAM_SPAWN_HEAT_MIN = 0.35  # heat must exceed this before steam appears
+STEAM_SPAWN_RATE = 6.0  # particles/s at heat == 1.0
+STEAM_LIFE_MIN = 0.7
+STEAM_LIFE_MAX = 1.3
+STEAM_DRIFT_MIN = 18.0  # px/s upward
+STEAM_DRIFT_MAX = 34.0
+
 
 def new_state():
     now = time.monotonic()
@@ -62,6 +80,11 @@ def new_state():
         "pounce_ends_at": 0.0,
         "kneading": False,
         "kneading_ends_at": 0.0,
+        "knead_envelope": 0.0,
+        "knead_phase": 0.0,
+        "key_press_times": [],
+        "heat": 0.0,
+        "steam_particles": [],  # list of {dx, rise, age, life, drift_speed}
         "prev_window_pos": (100, 100),
         "drag_vx": 0.0,
         "drag_vy": 0.0,

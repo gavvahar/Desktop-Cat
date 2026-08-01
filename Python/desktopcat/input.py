@@ -129,12 +129,57 @@ def end_drag(state):
 
 def on_key_press(state, now):
     state["kneading"] = True
-    state["kneading_ends_at"] = now + 0.25
+    state["kneading_ends_at"] = now + st.KNEADING_HOLD
+    state["key_press_times"].append(now)
 
 
 def update_kneading(state, now):
     if state["kneading"] and now >= state["kneading_ends_at"]:
         state["kneading"] = False
+
+
+def update_kneading_anim(state, dt):
+    target = 1.0 if state["kneading"] else 0.0
+    lerp = min(1.0, dt * st.KNEAD_ENVELOPE_SPEED)
+    state["knead_envelope"] += (target - state["knead_envelope"]) * lerp
+    state["knead_phase"] += dt * st.KNEAD_CYCLE_SPEED
+
+
+def update_heat(state, now, dt):
+    times = state["key_press_times"]
+    cutoff = now - st.KEY_RATE_WINDOW
+    while times and times[0] < cutoff:
+        times.pop(0)
+
+    rate = len(times) / st.KEY_RATE_WINDOW
+    span = st.OVERHEAT_RATE_MAX - st.OVERHEAT_RATE_MIN
+    target = max(0.0, min(1.0, (rate - st.OVERHEAT_RATE_MIN) / span))
+
+    speed = st.HEAT_RISE_SPEED if target > state["heat"] else st.HEAT_FALL_SPEED
+    lerp = min(1.0, dt * speed)
+    state["heat"] += (target - state["heat"]) * lerp
+
+
+def update_steam_particles(state, dt):
+    particles = state["steam_particles"]
+    for p in particles:
+        p["age"] += dt
+        p["rise"] += p["drift_speed"] * dt
+    state["steam_particles"] = [p for p in particles if p["age"] < p["life"]]
+
+    if state["heat"] < st.STEAM_SPAWN_HEAT_MIN:
+        return
+    spawn_chance = (state["heat"] - st.STEAM_SPAWN_HEAT_MIN) * st.STEAM_SPAWN_RATE * dt
+    if random.random() < spawn_chance:
+        state["steam_particles"].append(
+            {
+                "dx": random.uniform(-8.0, 8.0),
+                "rise": 0.0,
+                "age": 0.0,
+                "life": random.uniform(st.STEAM_LIFE_MIN, st.STEAM_LIFE_MAX),
+                "drift_speed": random.uniform(st.STEAM_DRIFT_MIN, st.STEAM_DRIFT_MAX),
+            }
+        )
 
 
 def start_keyboard_listener(state):
