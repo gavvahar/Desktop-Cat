@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Minimal AppStream metadata, just enough for flatpak-builder to succeed
+  and for the app to show up sanely in a software center. Flathub's actual
+  submission requirements are stricter (screenshots, a release history,
+  etc); expand this before submitting there.
+-->
+<component type="desktop-application">
+  <id>io.github.gavvahar.DesktopCat</id>
+  <name>Desktop Cat</name>
+  <summary>A pixel-cat desktop companion</summary>
+  <metadata_license>MIT</metadata_license>
+  <project_license>MIT</project_license>
+  <description>
+    <p>
+      A free, open-source pixel-cat desktop companion that lives as an
+      always-on-top overlay, reacts to mouse, keyboard, and scroll input,
+      and runs stretch / water / Pomodoro reminders. No accounts, no
+      network access, no telemetry.
+    </p>
+  </description>
+  <launchable type="desktop-id">io.github.gavvahar.DesktopCat.desktop</launchable>
+  <content_rating type="oars-1.1" />
+  <url type="homepage">https://github.com/gavvahar/Desktop-Cat</url>
+</component>

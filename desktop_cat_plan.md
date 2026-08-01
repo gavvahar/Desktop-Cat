@@ -10,7 +10,7 @@ A free, open-source pixel-cat desktop companion (Comnyang-style) built in
 - A tiny pixel cat that lives as an always-on-top overlay, reacts to mouse /
   keyboard / scroll, and runs stretch / water / Pomodoro reminders.
 - **Free forever.** No purchase flow, no license server, no telemetry.
-- Ship as source on GitHub + an AppImage.
+- Ship as source on GitHub + an AppImage and Flatpak.
 
 ## Stack
 
@@ -19,7 +19,7 @@ A free, open-source pixel-cat desktop companion (Comnyang-style) built in
 | App framework | PySide6 (Qt)                                    | Python-first, light RAM, good transparent-window support |
 | Rendering     | QPainter (procedural now) → sprite sheets later | Start asset-free, swap in art                            |
 | Global input  | `pynput` (X11) / `python-evdev` (Wayland)       | Reacts to input anywhere on screen                       |
-| Packaging     | AppImage                                        | Standard Linux distribution                              |
+| Packaging     | AppImage, Flatpak                               | Standard Linux distribution                              |
 | Art tool      | Aseprite (or commission)                        | Pixel sprite sheets + palette maps                       |
 
 ## The hard parts (read before building)
@@ -90,7 +90,7 @@ A free, open-source pixel-cat desktop companion (Comnyang-style) built in
 ### Phase 8 — Ship
 
 - [x] Settings persistence (`config.json`, Phase 6) + autostart entry (`Python/desktopcat/autostart.py`: XDG autostart on Linux, Run registry key on Windows, toggled from Settings)
-- [x] Package as AppImage (`packaging/appimage/build.sh`)
+- [x] Package as AppImage (`packaging/appimage/build.sh`) and Flatpak (`packaging/flatpak/`; also builds a Windows `.exe` and a macOS `.app`, beyond the original plan's Linux-only scope)
 - [x] GitHub repo + README + LICENSE (went with MIT -- permissive default; swap to GPL if you'd rather keep forks open)
 - [ ] Draw/commission original sprite art (do NOT copy Comnyang's assets) -- left for you: this is a creative/licensing call, not something to auto-generate. The app stays asset-free procedural (QPainter) until then.
 

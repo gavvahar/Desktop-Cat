@@ -26,3 +26,11 @@ packaging/windows/*.spec
 packaging/macos/build/
 packaging/macos/dist/
 packaging/macos/*.spec
+
+# Flatpak build artifacts (packaging/flatpak/build.sh regenerates these;
+# only the manifest/desktop/metainfo/launcher/build.sh source files are
+# tracked)
+packaging/flatpak/.flatpak-builder/
+packaging/flatpak/build-dir/
+packaging/flatpak/repo/
+packaging/flatpak/*.flatpak

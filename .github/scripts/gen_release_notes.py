@@ -30,6 +30,7 @@ CATEGORY_ORDER = [
 RELEASE_ASSETS = [
     ("🪟 Windows", "Desktop-Cat-windows.zip"),
     ("🐧 Linux (AppImage)", "Desktop-Cat-x86_64.AppImage"),
+    ("📦 Linux (Flatpak)", "Desktop-Cat.flatpak"),
     ("🍎 macOS (unsigned -- see README)", "Desktop-Cat-macos.zip"),
 ]
 

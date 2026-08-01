@@ -156,6 +156,45 @@ first run (cached in `packaging/appimage/.tools/`), and produces
 (`build.sh`, `AppRun`, `desktop-cat.desktop`, `desktop-cat.png`) are tracked
 in git -- everything else the script generates is gitignored.
 
+## Linux: Flatpak (unverified locally -- CI-built)
+
+`packaging/flatpak/io.github.gavvahar.DesktopCat.yml` is a full Flatpak
+manifest, but it hasn't been built locally -- `flatpak-builder` needs a
+`sudo` install plus multi-GB runtime downloads that weren't practical in
+the environment this was written in. Instead, `.github/workflows/release.yml`
+builds it on a real Linux CI runner via the standard
+[flatpak-github-actions](https://github.com/flatpak/flatpak-github-actions)
+action, so at least the *build step* is verified there. Check the Actions
+tab for the `build-flatpak` job's status.
+
+A few things worth knowing:
+
+- Runtime is `org.freedesktop.Platform`, not a KDE/Qt runtime -- PySide6's
+  wheels bundle their own Qt, so a Qt-flavored runtime would just mean two
+  copies of Qt on disk.
+- Dependency wheels/sdists (PySide6, pynput, and their sub-dependencies)
+  are pinned by URL + sha256 directly in the manifest, since Flatpak builds
+  run offline and need every source pre-declared. `evdev` (a pynput
+  dependency) builds from source and needs `linux/input.h` -- same
+  requirement noted in the AppImage build's comments -- which is untested
+  against `org.freedesktop.Sdk`'s headers.
+- Needs `--socket=x11` specifically (not just the more sandboxed
+  `--socket=fallback-x11`) for `pynput`'s global keyboard/mouse capture to
+  work at all; under pure Wayland without that, those reactions fail to
+  start the same way they do everywhere else in this app -- see the plan's
+  "hard parts" note on Wayland restricting global input.
+- `--filesystem` grants match this app's actual file I/O:
+  `~/.config/desktopcat/config.json` and `~/.config/autostart/desktopcat.desktop`
+  (the latter is how `autostart.py` implements autostart on Linux --
+  a stricter Flatpak citizen would use the Background portal instead).
+
+To build it yourself once you have `flatpak` + `flatpak-builder` +
+the `org.freedesktop.Platform`/`Sdk`//23.08 runtimes installed:
+
+```
+bash packaging/flatpak/build.sh
+```
+
 ## macOS: .app bundle (unverified -- see caveats)
 
 **Nothing about macOS has been tested on real hardware.** Everything below

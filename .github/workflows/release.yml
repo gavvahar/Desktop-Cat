@@ -143,8 +143,31 @@ jobs:
           path: packaging/macos/dist/Desktop-Cat-macos.zip
           if-no-files-found: error
 
+  build-flatpak:
+    needs: version
+    if: needs.version.outputs.skip == 'false'
+    runs-on: ubuntu-latest
+    container:
+      image: bilelmoussaoui/flatpak-github-actions:freedesktop-23.08
+      options: --privileged
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: flatpak/flatpak-github-actions/flatpak-builder@v6
+        with:
+          bundle: Desktop-Cat.flatpak
+          manifest-path: packaging/flatpak/io.github.gavvahar.DesktopCat.yml
+          cache-key: flatpak-builder-${{ github.sha }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: flatpak
+          path: Desktop-Cat.flatpak
+          if-no-files-found: error
+
   release:
-    needs: [version, build-appimage, build-windows-exe, build-macos-app]
+    needs: [version, build-appimage, build-windows-exe, build-macos-app, build-flatpak]
     if: needs.version.outputs.skip == 'false'
     runs-on: ubuntu-latest
     permissions:
@@ -169,6 +192,11 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: macos-app
+          path: dist-assets
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: flatpak
           path: dist-assets
 
       - name: Generate changelog from commits
@@ -224,4 +252,5 @@ jobs:
             --notes-file /tmp/release_notes.md \
             dist-assets/Desktop-Cat-x86_64.AppImage \
             dist-assets/Desktop-Cat-windows.zip \
-            dist-assets/Desktop-Cat-macos.zip
+            dist-assets/Desktop-Cat-macos.zip \
+            dist-assets/Desktop-Cat.flatpak
