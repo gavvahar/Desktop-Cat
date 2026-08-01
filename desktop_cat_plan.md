@@ -61,8 +61,8 @@ A free, open-source pixel-cat desktop companion (Comnyang-style) built in
 
 ### Phase 3 — Keyboard reactions
 
-- [ ] **Kneading** anim on keypress (upgrade the stub)
-- [ ] **Overheat** — high keystroke rate → red tint + steam particles
+- [x] **Kneading** anim on keypress (upgrade the stub)
+- [x] **Overheat** — high keystroke rate → red tint + steam particles
 
 ### Phase 4 — Scroll
 
@@ -118,5 +118,5 @@ A free, open-source pixel-cat desktop companion (Comnyang-style) built in
 
 ## Next action
 
-Phase 3: **kneading + overheat**, upgrading the keyboard stub from Phase 0
-with real per-keypress animation and a sustained-typing reaction.
+Phase 4: **paper unroll**, reacting to scroll events with an unspool/re-roll
+animation.
