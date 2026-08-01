@@ -8,7 +8,7 @@ grouping/rendering itself instead, reusing the same `group` value that git-cliff
 [tool.git-cliff.git] commit_parsers (in pyproject.toml) already assigned to each
 commit, so the category taxonomy stays defined in exactly one place.
 
-Usage: python3 gen_release_notes.py <context.json>
+Usage: python3 gen_release_notes.py <context.json> <tag>
 Requires GITHUB_REPOSITORY in the environment (set automatically by Actions).
 """
 
@@ -26,7 +26,14 @@ CATEGORY_ORDER = [
     "📝 Changes",
 ]
 
+# Keep in sync with the artifact filenames release.yml builds and attaches.
+RELEASE_ASSETS = [
+    ("🪟 Windows", "desktop-cat.exe"),
+    ("🐧 Linux (AppImage)", "Desktop-Cat-x86_64.AppImage"),
+]
+
 context_path = sys.argv[1]
+tag = sys.argv[2]
 repo = os.environ["GITHUB_REPOSITORY"]
 
 with open(context_path) as f:
@@ -44,7 +51,12 @@ for commits_in_group in by_group.values():
 order = [g for g in CATEGORY_ORDER if g in by_group]
 order += [g for g in by_group if g not in order]
 
-lines = []
+lines = ["## Downloads", ""]
+for label, filename in RELEASE_ASSETS:
+    url = f"https://github.com/{repo}/releases/download/{tag}/{filename}"
+    lines.append(f"- {label}: [{filename}]({url})")
+lines.append("")
+
 for group in order:
     lines.append(f"### {group}")
     lines.append("")
