@@ -160,7 +160,7 @@ in git -- everything else the script generates is gitignored.
 
 **Nothing about macOS has been tested on real hardware.** Everything below
 is reasoned through and, where possible, built by CI on GitHub's hosted
-`macos-latest` runner (so at least the *packaging step* is verified to
+`macos-latest` runner (so at least the _packaging step_ is verified to
 succeed) -- but actually running/using the app on a Mac has not been
 confirmed by anyone yet. Two known gaps:
 
