@@ -14,3 +14,9 @@ packaging/appimage/dist/
 packaging/appimage/AppDir/
 packaging/appimage/*.spec
 packaging/appimage/*.AppImage
+
+# Windows .exe build artifacts (packaging/windows/build.ps1 regenerates
+# these; only the source files -- build.ps1, desktop-cat.ico -- are tracked)
+packaging/windows/build/
+packaging/windows/dist/
+packaging/windows/*.spec

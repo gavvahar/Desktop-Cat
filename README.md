@@ -84,6 +84,26 @@ python -m desktopcat.main
 
 No network access is required or requested by the app.
 
+## Windows: standalone .exe
+
+If you'd rather not `pip install` anything, `packaging/windows/build.ps1`
+builds a single portable `desktop-cat.exe` (PyInstaller `--onefile`) --
+download-and-run, no Python setup needed. This is the Windows equivalent of
+the Linux AppImage below; there's no cross-platform way to build it, so it
+has to be built (or downloaded prebuilt, once uploaded to a release) on an
+actual Windows machine.
+
+Build it yourself, from a native (non-WSL) PowerShell in the repo root:
+
+```
+.\packaging\windows\build.ps1
+```
+
+This installs PyInstaller, then produces
+`packaging\windows\dist\desktop-cat.exe`. Only the source files
+(`build.ps1`, `desktop-cat.ico`) are tracked in git; `build/`, `dist/`, and
+the generated `.spec` are gitignored.
+
 ## Linux: AppImage
 
 Prebuilt `Desktop-Cat-x86_64.AppImage` releases are on the
