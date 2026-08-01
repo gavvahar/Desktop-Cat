@@ -1,0 +1,5 @@
+node_modules/**
+packaging/appimage/build/**
+packaging/appimage/dist/**
+packaging/windows/build/**
+packaging/windows/dist/**
