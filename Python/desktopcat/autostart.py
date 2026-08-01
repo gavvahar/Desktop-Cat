@@ -1,6 +1,11 @@
 """Phase 8: enable/disable launching Desktop-Cat automatically at login.
-Linux: an XDG autostart .desktop file. Windows: the per-user Run registry
-key. Plain functions -- no classes.
+Linux: an XDG autostart .desktop file. macOS: a LaunchAgent plist.
+Windows: the per-user Run registry key. Plain functions -- no classes.
+
+The macOS path is unverified -- there's no Mac available to test this on
+(unlike Windows, which was verified via WSL interop). It's written to spec
+(a standard per-user LaunchAgent) but treat it as best-effort until someone
+confirms it on real hardware.
 """
 
 import os, platform, sys
@@ -12,15 +17,25 @@ def _linux_autostart_path():
     return os.path.join(os.path.expanduser("~"), ".config", "autostart", "desktopcat.desktop")
 
 
+def _macos_autostart_path():
+    return os.path.join(os.path.expanduser("~"), "Library", "LaunchAgents", "com.desktopcat.plist")
+
+
 def is_enabled():
-    if platform.system() == "Windows":
+    system = platform.system()
+    if system == "Windows":
         return _windows_autostart_enabled()
+    if system == "Darwin":
+        return os.path.isfile(_macos_autostart_path())
     return os.path.isfile(_linux_autostart_path())
 
 
 def set_enabled(enabled):
-    if platform.system() == "Windows":
+    system = platform.system()
+    if system == "Windows":
         _set_windows_autostart(enabled)
+    elif system == "Darwin":
+        _set_macos_autostart(enabled)
     else:
         _set_linux_autostart(enabled)
 
@@ -45,6 +60,25 @@ def _set_linux_autostart(enabled):
             f"Exec={command}\n"
             "X-GNOME-Autostart-enabled=true\n"
         )
+
+
+def _set_macos_autostart(enabled):
+    path = _macos_autostart_path()
+    if not enabled:
+        if os.path.isfile(path):
+            os.remove(path)
+        return
+
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    import plistlib
+
+    plist = {
+        "Label": "com.desktopcat",
+        "ProgramArguments": [sys.executable, "-m", "desktopcat.main"],
+        "RunAtLoad": True,
+    }
+    with open(path, "wb") as fh:
+        plistlib.dump(plist, fh)
 
 
 def _windows_autostart_enabled():
