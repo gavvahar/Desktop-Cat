@@ -28,7 +28,7 @@ CATEGORY_ORDER = [
 
 # Keep in sync with the artifact filenames release.yml builds and attaches.
 RELEASE_ASSETS = [
-    ("🪟 Windows", "desktop-cat.exe"),
+    ("🪟 Windows", "Desktop-Cat-windows.zip"),
     ("🐧 Linux (AppImage)", "Desktop-Cat-x86_64.AppImage"),
     ("🍎 macOS (unsigned -- see README)", "Desktop-Cat-macos.zip"),
 ]

@@ -97,14 +97,33 @@ python -m desktopcat.main
 
 No network access is required or requested by the app.
 
-## Windows: standalone .exe
+## Windows: standalone build
 
 If you'd rather not `pip install` anything, `packaging/windows/build.ps1`
-builds a single portable `desktop-cat.exe` (PyInstaller `--onefile`) --
-download-and-run, no Python setup needed. This is the Windows equivalent of
-the Linux AppImage below; there's no cross-platform way to build it, so it
-has to be built (or downloaded prebuilt, once uploaded to a release) on an
-actual Windows machine.
+builds a portable `desktop-cat` folder -- no Python setup needed. This is
+the Windows equivalent of the Linux AppImage below; there's no
+cross-platform way to build it, so it has to be built (or downloaded
+prebuilt from a release) on an actual Windows machine.
+
+Prebuilt `Desktop-Cat-windows.zip` releases are on the
+[Releases page](https://github.com/gavvahar/Desktop-Cat/releases) --
+download, extract, and run `desktop-cat.exe` from inside the extracted
+folder.
+
+**Why a zip of a folder instead of a single .exe:** it used to be a single
+PyInstaller `--onefile` executable, but that got flagged by Windows
+Defender as "virus detected" -- a well-known, common false positive for
+PyInstaller onefile builds specifically. Onefile mode works by
+self-extracting to a temp folder and running from there on every launch,
+which is exactly the behavioral pattern malware droppers have, so
+heuristic/cloud-reputation antivirus engines flag it constantly, even
+when it's completely benign. Combined with being unsigned (no Apple/
+Microsoft developer certificate involved in this project) and a brand-new
+file hash Windows has never seen before, that's a near-guaranteed flag.
+Switching to PyInstaller's default `--onedir` mode (a plain folder, no
+runtime self-extraction) avoids that specific behavioral trigger. If
+Defender or SmartScreen still complains, right-click -> Properties ->
+Unblock, or "More info" -> "Run anyway".
 
 Build it yourself, from a native (non-WSL) PowerShell in the repo root:
 
@@ -113,7 +132,8 @@ Build it yourself, from a native (non-WSL) PowerShell in the repo root:
 ```
 
 This installs PyInstaller, then produces
-`packaging\windows\dist\desktop-cat.exe`. Only the source files
+`packaging\windows\dist\desktop-cat\desktop-cat.exe`, zipped as
+`packaging\windows\dist\Desktop-Cat-windows.zip`. Only the source files
 (`build.ps1`, `desktop-cat.ico`) are tracked in git; `build/`, `dist/`, and
 the generated `.spec` are gitignored.
 
