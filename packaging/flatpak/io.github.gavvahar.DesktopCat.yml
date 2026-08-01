@@ -34,9 +34,19 @@ modules:
   - name: python3-desktopcat-deps
     buildsystem: simple
     build-commands:
+      # evdev's pyproject.toml declares `license = "BSD-3-Clause"` (the old
+      # single-string form); recent setuptools enforces PEP 639 and rejects
+      # that. --no-build-isolation makes evdev's build use whatever
+      # setuptools is already installed, so force-install an older,
+      # pre-PEP-639-enforcement setuptools first rather than whatever the
+      # SDK image happens to ship.
+      - pip3 install --no-index --find-links=. --force-reinstall setuptools==69.5.1
       - pip3 install --no-index --no-build-isolation --find-links=. --prefix=${FLATPAK_DEST}
         pyside6 pynput
     sources:
+      - type: file
+        url: https://files.pythonhosted.org/packages/f7/29/13965af254e3373bceae8fb9a0e6ea0d0e571171b80d6646932131d6439b/setuptools-69.5.1-py3-none-any.whl
+        sha256: c636ac361bc47580504644275c9ad802c50415c7522212252c033bd15f301f32
       # PySide6 + its own split-out packages (wheels bundle Qt itself, so
       # no source build needed -- manylinux x86_64 only, matching this
       # app's other packaging targets, which are all x86_64).
