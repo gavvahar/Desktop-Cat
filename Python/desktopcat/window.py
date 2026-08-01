@@ -21,6 +21,19 @@ from desktopcat import state as st
 TICK_MS = 16  # ~60 fps
 
 
+def is_wsl():
+    """WSLg's window forwarding drops Qt.WindowType.Tool windows entirely
+    (not just hides them from Alt+Tab/taskbar like on native X11/Windows --
+    they never render at all). Detected via /proc/version rather than an
+    env var so it doesn't depend on how the process was launched.
+    """
+    try:
+        with open("/proc/version") as fh:
+            return "microsoft" in fh.read().lower()
+    except OSError:
+        return False
+
+
 def tick(window):
     now = time.monotonic()
     state = window.state
@@ -63,7 +76,10 @@ class CatWindow(QWidget):
         super().__init__()
         self.state = st.new_state()
 
-        self.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.WindowStaysOnTopHint | Qt.WindowType.Tool)
+        flags = Qt.WindowType.FramelessWindowHint | Qt.WindowType.WindowStaysOnTopHint
+        if not is_wsl():
+            flags |= Qt.WindowType.Tool
+        self.setWindowFlags(flags)
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
         self.setFixedSize(st.WINDOW_SIZE, st.WINDOW_SIZE)
         self.setMask(render.build_click_mask_region(st.WINDOW_SIZE))
