@@ -81,45 +81,4 @@ $env:PYTHONPATH = "Python"
 python -m desktopcat.main
 ```
 
-## Run with Docker / Podman
-
-The cat is a GUI app, so the container needs access to your **host's X11
-display** -- it doesn't bundle its own display server. This only works on
-X11 (or XWayland); see the plan's "hard parts" note on Wayland restricting
-global input. The commands below are identical for `docker` and `podman`
-(swap the binary name); on some setups `docker` is itself provided by
-`podman-docker`, in which case they're literally the same thing.
-
-Build:
-
-```
-docker build -t desktop-cat .
-```
-
-Allow the container to connect to your X server, then run:
-
-```
-xhost +local:docker   # or +local:podman
-docker run --rm \
-  -e DISPLAY=$DISPLAY \
-  -v /tmp/.X11-unix:/tmp/.X11-unix:rw \
-  --ipc host \
-  desktop-cat
-xhost -local:docker   # revoke access when done
-```
-
-Or with Compose (`docker compose up --build` / `podman-compose up --build`),
-using the included `compose.yml`.
-
-**Notes**
-
-- `xhost +local:docker` grants any local container access to your X server --
-  narrower than `xhost +`, but still worth revoking (`xhost -local:docker`)
-  when you're done. If that's too permissive for your taste, use an
-  `XAUTHORITY`-cookie-based approach instead.
-- Rootless Podman: if the X11 socket's permissions don't line up with the
-  container's UID, add `--userns=keep-id`.
-- The global keyboard "kneading" reaction needs the container to reach your
-  X server the same way (already covered by the mounts above); it prints a
-  warning and disables itself rather than crashing if it can't.
-- No network access is required or requested by the app or image.
+No network access is required or requested by the app.

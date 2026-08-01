@@ -1,8 +1,0 @@
-.git
-.gitignore
-.venv
-__pycache__
-*.py[cod]
-desktop_cat_plan.md
-README.md
-enviroment.yml

@@ -6,9 +6,9 @@
 pip install -r requirements.txt
 ```
 
-(or `conda env create -f enviroment.yml`, or use Docker/Podman -- see the
-README's "Run with Docker / Podman" section). PySide6 apps need a real X11
-display to run; see the README for details.
+(or `conda env create -f enviroment.yml`, or `.\install.ps1` on native
+Windows -- see the README for details). PySide6 apps need a real display to
+run.
 
 ## Code style
 
