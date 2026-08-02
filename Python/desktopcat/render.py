@@ -262,8 +262,11 @@ def _draw_puppy_ears(painter, cx, head_cy, r, flatten, fur_color, belly_color=BE
 def _draw_puppy_snout(painter, cx, head_cy, r, fur_color, belly_color=BELLY):
     """A small forward-projecting muzzle bump, layered over the shared
     head/muzzle-patch -- cats have a flat face, dogs have a snout."""
-    snout_w, snout_h = r * 0.62, r * 0.46
-    snout_cy = head_cy + r * 0.40
+    snout_w, snout_h = r * 0.58, r * 0.50
+    # Head's own silhouette bottom edge sits at head_cy + r*0.92; the snout
+    # needs to clear that to read as a protruding muzzle rather than just
+    # another same-colored patch drawn on top of the head.
+    snout_cy = head_cy + r * 0.72
     painter.setPen(NO_PEN)
     painter.setBrush(QBrush(fur_color))
     painter.drawEllipse(QPointF(cx, snout_cy), snout_w / 2, snout_h / 2)
@@ -412,17 +415,18 @@ def _draw_puppy_tail(painter, cx, base_y, body_w, now, mood, fur_color):
     else:
         wag = math.sin(now * 4.5) * 0.35
 
-    root_x = cx + body_w * 0.38
-    root_y = base_y - body_w * 0.06
+    root_x = cx + body_w * 0.40
+    root_y = base_y - body_w * 0.08
 
     # ctrl1 bulges out past the body's right edge (so it's visible once
-    # the body is drawn on top afterward), then ctrl2/tip hook the curl
-    # back up and in toward directly above the root.
+    # the body is drawn on top afterward); ctrl2/tip hook the tip back in
+    # for a curl, but stay well below the head so it doesn't disappear
+    # behind it.
     path = QPainterPath()
     path.moveTo(root_x, root_y)
-    ctrl1 = QPointF(root_x + body_w * (0.40 + wag * 0.15), root_y - body_w * 0.22)
-    ctrl2 = QPointF(root_x + body_w * (0.28 + wag * 0.10), root_y - body_w * 0.55)
-    tip = QPointF(root_x + body_w * (0.02 + wag * 0.15), root_y - body_w * 0.64)
+    ctrl1 = QPointF(root_x + body_w * (0.42 + wag * 0.20), root_y - body_w * 0.22)
+    ctrl2 = QPointF(root_x + body_w * (0.30 + wag * 0.15), root_y - body_w * 0.50)
+    tip = QPointF(root_x + body_w * (0.14 + wag * 0.20), root_y - body_w * 0.58)
     path.cubicTo(ctrl1, ctrl2, tip)
 
     painter.setPen(_round_pen(fur_color, body_w * 0.16))
