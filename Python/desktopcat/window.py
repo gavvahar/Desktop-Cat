@@ -15,6 +15,7 @@ from PySide6.QtWidgets import QApplication, QLabel, QMenu, QWidget
 
 from desktopcat import ai_hooks
 from desktopcat import config as cat_config
+from desktopcat import feeding
 from desktopcat import input as cat_input
 from desktopcat import peek
 from desktopcat import physics
@@ -69,10 +70,13 @@ def update_bubble(bubble, window, text):
 
 def show_context_menu(window, global_pos):
     menu = QMenu()
+    feed_action = menu.addAction("Feed")
     settings_action = menu.addAction("Settings...")
     quit_action = menu.addAction("Quit")
     chosen = menu.exec(global_pos)
-    if chosen == settings_action:
+    if chosen == feed_action:
+        feeding.feed_pet(window.state, time.monotonic())
+    elif chosen == settings_action:
         settings_ui.open_settings_dialog(window)
     elif chosen == quit_action:
         QApplication.quit()
@@ -136,6 +140,9 @@ def tick(window):
 
     peek.update_peek_mode(state, now)
     ai_hooks.update_ai_watch(state, now)
+
+    feeding.update_hunger(state, dt)
+    feeding.update_hunger_nag(state, now)
 
     reminders.update_reminders(state, now)
     reminders.update_pomodoro(state, now)

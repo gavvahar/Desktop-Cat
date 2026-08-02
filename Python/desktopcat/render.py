@@ -365,6 +365,11 @@ def _draw_face(painter, state, cx, head_cy, r, now, nose_color=PINK, iris_color=
     elif mood == "pounce":
         painter.setBrush(QBrush(OUTLINE))
         painter.drawEllipse(QPointF(cx, mouth_y + r * 0.03), r * 0.08, r * 0.08)
+    elif mood == "eat":
+        chew = 0.5 + 0.5 * math.sin(now * 10.0)
+        mw, mh = r * 0.16, r * (0.08 + 0.10 * chew)
+        painter.setBrush(QBrush(OUTLINE))
+        painter.drawEllipse(QPointF(cx, mouth_y + r * 0.02), mw / 2, mh / 2)
     else:
         painter.drawArc(QRectF(cx - r * 0.12, mouth_y - r * 0.04, r * 0.24, r * 0.12), 200 * 16, 140 * 16)
 

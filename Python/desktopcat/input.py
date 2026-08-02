@@ -56,6 +56,10 @@ def update_mood(state, now, cursor_pos):
         state["mood"] = "pounce"
         return
 
+    if now < state["eat_ends_at"]:
+        state["mood"] = "eat"
+        return
+
     velocity = state["cursor_velocity"]
     decel = state.get("_cursor_accel", 0.0)
 

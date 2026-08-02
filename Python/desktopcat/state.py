@@ -128,6 +128,9 @@ def new_state():
         "ai_watch_next_at": 0.0,
         "ai_poll_running": False,
         "ai_poll_result": None,  # set by the background poll thread; None until the first one finishes
+        "hunger": 0.0,  # 0.0 = just fed, rises toward 1.0 = starving
+        "hunger_nagged": False,  # one-shot: already showed the nag bubble this hungry-streak
+        "eat_ends_at": 0.0,
         "pose": {
             "crouch": 0.0,
             "ear_flatten": 0.0,
@@ -145,4 +148,5 @@ POSE_TARGETS = {
     "hunt": {"crouch": 0.5, "ear_flatten": 0.7, "eye_wide": 1.0, "paws_forward": 0.1},
     "pounce": {"crouch": 0.8, "ear_flatten": 0.9, "eye_wide": 1.0, "paws_forward": 1.0},
     "purr": {"crouch": 0.1, "ear_flatten": 0.0, "eye_wide": 0.0, "paws_forward": 0.0},
+    "eat": {"crouch": 0.3, "ear_flatten": 0.1, "eye_wide": 0.0, "paws_forward": 0.8},
 }
