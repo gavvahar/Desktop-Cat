@@ -14,6 +14,7 @@ from PySide6.QtGui import QCursor
 from PySide6.QtWidgets import QApplication, QLabel, QMenu, QWidget
 
 from desktopcat import ai_hooks
+from desktopcat import audio
 from desktopcat import config as cat_config
 from desktopcat import feeding
 from desktopcat import input as cat_input
@@ -140,6 +141,7 @@ def tick(window):
 
     peek.update_peek_mode(state, now)
     ai_hooks.update_ai_watch(state, now)
+    audio.update_audio_watch(state, now)
 
     feeding.update_hunger(state, dt)
     feeding.update_hunger_nag(state, now)

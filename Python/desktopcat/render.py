@@ -26,6 +26,8 @@ STEAM = QColor(235, 235, 240)
 PAPER = QColor(250, 240, 210)
 PAPER_ROLL = QColor(228, 210, 172)
 PAPER_LINE = QColor(184, 152, 104)
+HEADPHONE_BAND = QColor(50, 50, 60)
+HEADPHONE_PAD = QColor(214, 84, 118)
 
 NO_PEN = QPen(Qt.PenStyle.NoPen)
 
@@ -136,6 +138,8 @@ def draw_pet(painter, state, width, height, now):
     _draw_steam_particles(painter, state["steam_particles"], cx, head_cy - head_r * 1.05)
     if state.get("ai_active"):
         _draw_thinking_dots(painter, cx, head_cy - head_r * 1.3, now)
+    if state.get("audio_playing"):
+        _draw_headphones(painter, cx, head_cy, head_r)
 
 
 def _draw_body(painter, cx, base_y, w, h, fur_color, belly_color=BELLY):
@@ -461,3 +465,28 @@ def _draw_thinking_dots(painter, cx, top_y, now):
         color.setAlpha(max(60, alpha))
         painter.setBrush(QBrush(color))
         painter.drawEllipse(QPointF(cx - 10 + i * 10, top_y + bob), 2.5, 2.5)
+
+
+def _draw_headphones(painter, cx, head_cy, r):
+    """Drawn last, over ears/head -- geometry is purely cx/head_cy/r based
+    so it's identical for cat and puppy regardless of ear shape underneath.
+    """
+    cup_r = r * 0.20
+    cup_dx = r * 0.90  # cup centers, just inside the head's own edge (edge is at r)
+    cup_cy = head_cy + r * 0.05  # roughly eye-to-nose height, on the sides of the head
+    band_peak_y = head_cy - r * 1.05  # below ear-tip height, so ears still poke above the band
+
+    band = QPainterPath()
+    band.moveTo(cx - cup_dx, cup_cy - cup_r * 0.6)
+    band.quadTo(QPointF(cx, band_peak_y), QPointF(cx + cup_dx, cup_cy - cup_r * 0.6))
+    painter.setBrush(Qt.BrushStyle.NoBrush)
+    painter.setPen(_round_pen(HEADPHONE_BAND, r * 0.13))
+    painter.drawPath(band)
+
+    painter.setPen(QPen(OUTLINE, 1.5))
+    for side in (-1, 1):
+        ccx = cx + side * cup_dx
+        painter.setBrush(QBrush(HEADPHONE_BAND))
+        painter.drawEllipse(QPointF(ccx, cup_cy), cup_r, cup_r * 1.2)
+        painter.setBrush(QBrush(HEADPHONE_PAD))
+        painter.drawEllipse(QPointF(ccx, cup_cy), cup_r * 0.55, cup_r * 0.75)

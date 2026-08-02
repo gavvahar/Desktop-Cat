@@ -131,6 +131,10 @@ def new_state():
         "hunger": 0.0,  # 0.0 = just fed, rises toward 1.0 = starving
         "hunger_nagged": False,  # one-shot: already showed the nag bubble this hungry-streak
         "eat_ends_at": 0.0,
+        "audio_playing": False,
+        "audio_next_at": 0.0,
+        "audio_poll_running": False,
+        "audio_poll_result": None,  # set by the background poll thread; None until the first one finishes
         "pose": {
             "crouch": 0.0,
             "ear_flatten": 0.0,
