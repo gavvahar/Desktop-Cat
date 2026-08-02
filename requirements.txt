@@ -1,5 +1,6 @@
 PySide6
 pynput
+pycaw; sys_platform == "win32"
 nodeenv
 tox
 python-dotenv
