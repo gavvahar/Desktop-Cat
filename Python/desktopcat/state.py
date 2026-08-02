@@ -126,6 +126,8 @@ def new_state():
         "peek_target_x": 100,
         "ai_active": False,
         "ai_watch_next_at": 0.0,
+        "ai_poll_running": False,
+        "ai_poll_result": None,  # set by the background poll thread; None until the first one finishes
         "pose": {
             "crouch": 0.0,
             "ear_flatten": 0.0,
