@@ -14,12 +14,14 @@ OUTLINE = QColor(70, 45, 30)
 FUR = QColor(242, 166, 90)
 FUR_DARK = QColor(214, 133, 63)
 FUR_HOT = QColor(214, 62, 48)  # Phase 3: overheat red tint target
-PUPPY_FUR = QColor(196, 148, 96)  # default puppy fur, used when no custom color is set
+PUPPY_FUR = QColor(120, 124, 132)  # husky-puppy grey; muzzle/belly/ear-inner stay light (below) for the classic two-tone coat
 BELLY = QColor(255, 231, 199)
+PUPPY_BELLY = QColor(246, 246, 244)  # off-white, for the husky's muzzle/chest/belly
 PINK = QColor(255, 168, 178)
 NOSE_DARK = QColor(55, 42, 40)  # puppy nose (cat's is PINK)
 EYE_WHITE = QColor(255, 255, 255)
 EYE_PUPIL = QColor(35, 25, 20)
+HUSKY_IRIS = QColor(120, 190, 225)  # the other unmistakable husky trait
 STEAM = QColor(235, 235, 240)
 PAPER = QColor(250, 240, 210)
 PAPER_ROLL = QColor(228, 210, 172)
@@ -94,6 +96,7 @@ def draw_pet(painter, state, width, height, now):
     default_fur = PUPPY_FUR if is_puppy else FUR
     base_fur = QColor(*custom_fur) if custom_fur else default_fur
     fur_color = _tint(base_fur, FUR_HOT, state["heat"])
+    belly_color = PUPPY_BELLY if is_puppy else BELLY
 
     body_h = height * 0.42 * (1.0 - 0.35 * pose["crouch"])
     body_w = width * 0.62 * (1.0 + 0.12 * pose["crouch"])
@@ -103,38 +106,39 @@ def draw_pet(painter, state, width, height, now):
         _draw_puppy_tail(painter, cx, base_y, body_w, now, state["mood"], fur_color)
     else:
         _draw_tail(painter, cx, base_y, body_w, now, state["mood"], fur_color)
-    _draw_body(painter, cx, base_y, body_w, body_h, fur_color)
+    _draw_body(painter, cx, base_y, body_w, body_h, fur_color, belly_color)
 
     envelope = state["knead_envelope"]
     phase = state["knead_phase"]
     knead_l = max(0.0, math.sin(phase)) * envelope
     knead_r = max(0.0, math.sin(phase + math.pi)) * envelope
-    _draw_paws(painter, cx, base_y, body_w, pose["paws_forward"], knead_l, knead_r)
+    _draw_paws(painter, cx, base_y, body_w, pose["paws_forward"], knead_l, knead_r, belly_color)
     _draw_scroll(painter, cx, base_y, body_w, state["scroll_unroll"])
 
     head_r = width * 0.30
     head_cy = body_top - head_r * 0.55
 
     if is_puppy:
-        _draw_puppy_ears(painter, cx, head_cy, head_r, pose["ear_flatten"], fur_color)
-        _draw_head(painter, cx, head_cy, head_r, fur_color)
-        _draw_puppy_snout(painter, cx, head_cy, head_r, fur_color)
+        _draw_puppy_ears(painter, cx, head_cy, head_r, pose["ear_flatten"], fur_color, belly_color)
+        _draw_head(painter, cx, head_cy, head_r, fur_color, belly_color)
+        _draw_puppy_snout(painter, cx, head_cy, head_r, fur_color, belly_color)
     else:
         _draw_ears(painter, cx, head_cy, head_r, pose["ear_flatten"], fur_color)
-        _draw_head(painter, cx, head_cy, head_r, fur_color)
+        _draw_head(painter, cx, head_cy, head_r, fur_color, belly_color)
 
     if config and config.get("pattern") == "tabby":
         stripe_color = _tint(base_fur, QColor(0, 0, 0), 0.35)
         _draw_stripes(painter, cx, base_y, body_w, body_h, head_cy, head_r, stripe_color)
 
     nose_color = NOSE_DARK if is_puppy else PINK
-    _draw_face(painter, state, cx, head_cy, head_r, now, nose_color)
+    iris_color = HUSKY_IRIS if is_puppy else None
+    _draw_face(painter, state, cx, head_cy, head_r, now, nose_color, iris_color)
     _draw_steam_particles(painter, state["steam_particles"], cx, head_cy - head_r * 1.05)
     if state.get("ai_active"):
         _draw_thinking_dots(painter, cx, head_cy - head_r * 1.3, now)
 
 
-def _draw_body(painter, cx, base_y, w, h, fur_color):
+def _draw_body(painter, cx, base_y, w, h, fur_color, belly_color=BELLY):
     path = QPainterPath()
     rect = QRectF(cx - w / 2, base_y - h, w, h)
     path.addRoundedRect(rect, w * 0.35, h * 0.35)
@@ -144,18 +148,18 @@ def _draw_body(painter, cx, base_y, w, h, fur_color):
 
     belly = QRectF(cx - w * 0.22, base_y - h * 0.55, w * 0.44, h * 0.55)
     painter.setPen(NO_PEN)
-    painter.setBrush(QBrush(BELLY))
+    painter.setBrush(QBrush(belly_color))
     painter.drawEllipse(belly)
 
 
-def _draw_paws(painter, cx, base_y, body_w, forward, knead_l, knead_r):
+def _draw_paws(painter, cx, base_y, body_w, forward, knead_l, knead_r, belly_color=BELLY):
     paw_w, paw_h = body_w * 0.22, body_w * 0.16
     offset_x = body_w * 0.20
     lift_y = forward * body_w * 0.28
     knead_amount = body_w * 0.10
 
     painter.setPen(NO_PEN)
-    painter.setBrush(QBrush(BELLY))
+    painter.setBrush(QBrush(belly_color))
     for side, knead in ((-1, knead_l), (1, knead_r)):
         px = cx + side * offset_x
         py = base_y - paw_h / 2 + lift_y * 0.2 - knead * knead_amount
@@ -218,26 +222,44 @@ def _draw_ears(painter, cx, head_cy, r, flatten, fur_color):
         painter.setBrush(QBrush(fur_color))
 
 
-def _draw_puppy_ears(painter, cx, head_cy, r, flatten, fur_color):
-    """Floppy hanging ears, angled outward -- the single biggest visual
-    cue that reads as "dog" rather than "cat". flatten (from the same
-    hunt/pounce pose system as the cat's ears) makes them swing back a
-    little further instead of pinning flat."""
-    ear_w = r * 0.40
-    ear_h = r * 0.9 * (1.0 - flatten * 0.2)
+def _draw_puppy_ears(painter, cx, head_cy, r, flatten, fur_color, belly_color=BELLY):
+    """Erect, rounded-tip triangular ears -- huskies (even puppies) have
+    upright ears, not floppy ones; that's the single most recognizable
+    breed trait, more than color or eyes. flatten (same hunt/pounce pose
+    system as the cat's ears) lays them back and out."""
+    ear_w = r * 0.66
+    ear_h = r * 0.80 * (1.0 - flatten * 0.3)
     painter.setPen(NO_PEN)
     painter.setBrush(QBrush(fur_color))
     for side in (-1, 1):
-        ex = cx + side * r * 0.90
-        ey = head_cy + r * 0.05
-        painter.save()
-        painter.translate(ex, ey)
-        painter.rotate(side * (14 + flatten * 10))
-        painter.drawEllipse(QPointF(0, ear_h * 0.35), ear_w / 2, ear_h / 2)
-        painter.restore()
+        base_x = cx + side * r * 0.60
+        base_y = head_cy - r * 0.50
+        tip_dx = side * ear_w * (0.20 + flatten * 0.65)
+        tip_dy = -ear_h
+
+        path = QPainterPath()
+        path.moveTo(base_x - side * ear_w * 0.32, base_y + ear_w * 0.18)
+        path.quadTo(QPointF(base_x + tip_dx * 0.5, base_y + tip_dy * 0.7), QPointF(base_x + tip_dx, base_y + tip_dy))
+        path.quadTo(
+            QPointF(base_x + side * ear_w * 0.05, base_y + tip_dy * 0.65),
+            QPointF(base_x + side * ear_w * 0.32, base_y + ear_w * 0.18),
+        )
+        path.closeSubpath()
+        painter.drawPath(path)
+
+        inner = QPainterPath()
+        icx, icy = base_x, base_y + ear_w * 0.10
+        inner_tip = QPointF(base_x + tip_dx * 0.6, base_y + tip_dy * 0.68)
+        inner.moveTo(icx - side * ear_w * 0.14, icy)
+        inner.quadTo(QPointF(icx + tip_dx * 0.35, base_y + tip_dy * 0.42), inner_tip)
+        inner.quadTo(QPointF(icx + side * ear_w * 0.02, base_y + tip_dy * 0.38), QPointF(icx + side * ear_w * 0.14, icy))
+        inner.closeSubpath()
+        painter.setBrush(QBrush(belly_color))
+        painter.drawPath(inner)
+        painter.setBrush(QBrush(fur_color))
 
 
-def _draw_puppy_snout(painter, cx, head_cy, r, fur_color):
+def _draw_puppy_snout(painter, cx, head_cy, r, fur_color, belly_color=BELLY):
     """A small forward-projecting muzzle bump, layered over the shared
     head/muzzle-patch -- cats have a flat face, dogs have a snout."""
     snout_w, snout_h = r * 0.62, r * 0.46
@@ -247,18 +269,18 @@ def _draw_puppy_snout(painter, cx, head_cy, r, fur_color):
     painter.drawEllipse(QPointF(cx, snout_cy), snout_w / 2, snout_h / 2)
 
     patch = QRectF(cx - snout_w * 0.34, snout_cy - snout_h * 0.20, snout_w * 0.68, snout_h * 0.62)
-    painter.setBrush(QBrush(BELLY))
+    painter.setBrush(QBrush(belly_color))
     painter.drawEllipse(patch)
 
 
-def _draw_head(painter, cx, head_cy, r, fur_color):
+def _draw_head(painter, cx, head_cy, r, fur_color, belly_color=BELLY):
     painter.setPen(NO_PEN)
     painter.setBrush(QBrush(fur_color))
     painter.drawEllipse(QPointF(cx, head_cy), r, r * 0.92)
 
     muzzle = QRectF(cx - r * 0.42, head_cy + r * 0.15, r * 0.84, r * 0.55)
     painter.setPen(NO_PEN)
-    painter.setBrush(QBrush(BELLY))
+    painter.setBrush(QBrush(belly_color))
     painter.drawEllipse(muzzle)
 
 
@@ -286,7 +308,7 @@ def _draw_stripes(painter, cx, base_y, body_w, body_h, head_cy, head_r, stripe_c
     )
 
 
-def _draw_face(painter, state, cx, head_cy, r, now, nose_color=PINK):
+def _draw_face(painter, state, cx, head_cy, r, now, nose_color=PINK, iris_color=None):
     mood = state["mood"]
     eye_wide = state["pose"]["eye_wide"]
     happy = mood == "purr"
@@ -308,12 +330,19 @@ def _draw_face(painter, state, cx, head_cy, r, now, nose_color=PINK):
             painter.setBrush(QBrush(EYE_WHITE))
             painter.drawEllipse(QPointF(ex, eye_y), eye_w, eye_h)
 
-            painter.setPen(NO_PEN)
-            painter.setBrush(QBrush(EYE_PUPIL))
             pupil_r = eye_w * 0.45
             clamped_ox = max(-eye_w * 0.4, min(eye_w * 0.4, ox))
             clamped_oy = max(-eye_h * 0.4, min(eye_h * 0.4, oy))
-            painter.drawEllipse(QPointF(ex + clamped_ox, eye_y + clamped_oy), pupil_r, pupil_r)
+            pupil_center = QPointF(ex + clamped_ox, eye_y + clamped_oy)
+
+            if iris_color is not None:
+                painter.setPen(NO_PEN)
+                painter.setBrush(QBrush(iris_color))
+                painter.drawEllipse(pupil_center, pupil_r * 1.45, pupil_r * 1.45)
+
+            painter.setPen(NO_PEN)
+            painter.setBrush(QBrush(EYE_PUPIL))
+            painter.drawEllipse(pupil_center, pupil_r, pupil_r)
 
     nose = QPainterPath()
     ns = r * 0.10
@@ -372,29 +401,31 @@ def _draw_tail(painter, cx, base_y, body_w, now, mood, fur_color):
 
 
 def _draw_puppy_tail(painter, cx, base_y, body_w, now, mood, fur_color):
-    """Shorter and faster-wagging than the cat's tail -- happier by
-    default rather than idle-slow."""
+    """A curled "plume" tail hooking up and back over the body -- huskies
+    carry their tail curled, not straight out like a typical wag. wag
+    still gives it a little life (loosening/tightening the curl) without
+    fully uncurling it."""
     if mood == "pounce":
-        wag = 0.15
+        wag = 0.1
     elif mood == "purr":
-        wag = math.sin(now * 9.0) * 0.6
+        wag = math.sin(now * 8.0) * 0.3
     else:
-        wag = math.sin(now * 5.5) * 0.55
+        wag = math.sin(now * 4.5) * 0.35
 
-    root_x = cx + body_w * 0.40
-    root_y = base_y - body_w * 0.08
+    root_x = cx + body_w * 0.38
+    root_y = base_y - body_w * 0.06
 
-    # Bulges out well past the body's right edge before curving back up and
-    # in, same shape language as the cat's tail (just shorter/stubbier) --
-    # a gentler curve stays hidden behind the body, drawn afterward.
+    # ctrl1 bulges out past the body's right edge (so it's visible once
+    # the body is drawn on top afterward), then ctrl2/tip hook the curl
+    # back up and in toward directly above the root.
     path = QPainterPath()
     path.moveTo(root_x, root_y)
-    ctrl1 = QPointF(root_x + body_w * (0.42 + wag * 0.20), root_y - body_w * 0.20)
-    ctrl2 = QPointF(root_x + body_w * (0.38 + wag * 0.35), root_y - body_w * 0.48)
-    tip = QPointF(root_x + body_w * (0.18 + wag * 0.5), root_y - body_w * 0.60)
+    ctrl1 = QPointF(root_x + body_w * (0.40 + wag * 0.15), root_y - body_w * 0.22)
+    ctrl2 = QPointF(root_x + body_w * (0.28 + wag * 0.10), root_y - body_w * 0.55)
+    tip = QPointF(root_x + body_w * (0.02 + wag * 0.15), root_y - body_w * 0.64)
     path.cubicTo(ctrl1, ctrl2, tip)
 
-    painter.setPen(_round_pen(fur_color, body_w * 0.13))
+    painter.setPen(_round_pen(fur_color, body_w * 0.16))
     painter.drawPath(path)
 
 
