@@ -94,6 +94,43 @@ A free, open-source pixel-cat desktop companion (Comnyang-style) built in
 - [x] GitHub repo + README + LICENSE (went with MIT -- permissive default; swap to GPL if you'd rather keep forks open)
 - [ ] Draw/commission original sprite art (do NOT copy Comnyang's assets) -- left for you: this is a creative/licensing call, not something to auto-generate. The app stays asset-free procedural (QPainter) until then.
 
+### Phase 9 — Feed the pet + audio-playing headphones (planned, not started)
+
+Two additive features beyond the original scope. Both reuse existing
+architecture end-to-end (decaying-stat pattern like `heat`, bubble-message
+pattern from `reminders.show_message`, temporary-mood pattern like
+`pounce_ends_at`, and the threaded best-effort OS-probe pattern from
+`ai_hooks.py`) -- no new architectural patterns needed.
+
+- [ ] **Feed the pet** -- a right-click "Feed" menu action that resets a
+  hunger meter (`state["hunger"]`, rises over ~20 minutes) and triggers a
+  brief "eat" mood/animation (chewing mouth in `_draw_face`, paws-forward
+  pose reusing the existing `paws_forward` pose key). A one-shot nag bubble
+  ("I'm hungry!") fires via `reminders.show_message` once hunger crosses a
+  threshold. New `Python/desktopcat/feeding.py` module
+  (`update_hunger`, `update_hunger_nag`, `feed_pet`).
+- [ ] **Audio-playing headphones** -- best-effort, cross-platform detection
+  of whether the system is currently playing audio; draws headphones on
+  the pet's head while it is (`_draw_headphones` overlay in `render.py`,
+  gated by `state["audio_playing"]`, drawn last in `draw_pet` after the
+  existing `_draw_thinking_dots`). New `Python/desktopcat/audio.py` module,
+  structurally cloned from `ai_hooks.py` (background-threaded poll, never
+  blocks the GUI thread): Linux via `pactl list sink-inputs` (no new pip
+  dependency, checks for `"Corked: no"`), Windows via `pycaw`'s WASAPI
+  peak-meter query (`pycaw; sys_platform == "win32"` added to
+  `requirements.txt`), macOS left as a documented no-op (same accepted gap
+  as peek mode) since there's no dependency-free way to query it.
+- [ ] Wiring: `state.py` (new fields + `POSE_TARGETS["eat"]`), `input.py`
+  (`update_mood` gets an `eat_ends_at` check like `pounce_ends_at`),
+  `window.py` (`show_context_menu` gets a "Feed" action; `tick()` calls
+  `feeding.update_hunger`/`update_hunger_nag` and `audio.update_audio_watch`).
+- [ ] Verify headlessly through the real pipeline (`QT_QPA_PLATFORM=offscreen`,
+  real `CatWindow` -> `tick()`/state mutation -> `repaint()` -> `grab()` ->
+  pixel checks), same technique used for every prior feature -- fast-forward
+  hunger by setting `state["hunger"]` directly rather than waiting real
+  minutes; pixel-diff headphone-cup coordinates with `audio_playing` on/off
+  for both `character = "cat"` and `"puppy"`.
+
 ---
 
 ## Art plan
