@@ -39,6 +39,11 @@ def open_settings_dialog(window):
     name_edit = QLineEdit(config.get("name", ""))
     layout.addRow("Name:", name_edit)
 
+    character_combo = QComboBox()
+    character_combo.addItems(["cat", "puppy"])
+    character_combo.setCurrentText(config.get("character", "cat"))
+    layout.addRow("Companion:", character_combo)
+
     fur_color = {"value": config.get("fur_color")}
     color_button = QPushButton("Choose...")
 
@@ -97,6 +102,7 @@ def open_settings_dialog(window):
     def _save():
         new_config = {
             "name": name_edit.text(),
+            "character": character_combo.currentText(),
             "fur_color": fur_color["value"],
             "pattern": pattern_combo.currentText(),
             "reminders": {

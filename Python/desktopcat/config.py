@@ -10,6 +10,7 @@ CONFIG_PATH = os.path.join(CONFIG_DIR, "config.json")
 
 DEFAULTS = {
     "name": "",
+    "character": "cat",  # cat | puppy
     "fur_color": None,  # [r, g, b] or None for the default palette
     "pattern": "solid",  # solid | tabby
     "reminders": {
