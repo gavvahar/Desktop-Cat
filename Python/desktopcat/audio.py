@@ -25,7 +25,9 @@ def _is_audio_playing_linux():
     try:
         out = subprocess.run(
             ["pactl", "list", "sink-inputs"],
-            capture_output=True, text=True, timeout=AUDIO_POLL_TIMEOUT,
+            capture_output=True,
+            text=True,
+            timeout=AUDIO_POLL_TIMEOUT,
         )
         return "Corked: no" in out.stdout
     except Exception:
