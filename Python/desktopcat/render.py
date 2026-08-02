@@ -28,6 +28,8 @@ PAPER_ROLL = QColor(228, 210, 172)
 PAPER_LINE = QColor(184, 152, 104)
 HEADPHONE_BAND = QColor(50, 50, 60)
 HEADPHONE_PAD = QColor(214, 84, 118)
+FOOD_BOWL = QColor(150, 110, 70)
+FOOD_KIBBLE = QColor(214, 133, 63)
 
 NO_PEN = QPen(Qt.PenStyle.NoPen)
 
@@ -115,6 +117,8 @@ def draw_pet(painter, state, width, height, now):
     knead_l = max(0.0, math.sin(phase)) * envelope
     knead_r = max(0.0, math.sin(phase + math.pi)) * envelope
     _draw_paws(painter, cx, base_y, body_w, pose["paws_forward"], knead_l, knead_r, belly_color)
+    if state["mood"] == "eat":
+        _draw_food_bowl(painter, cx, base_y, body_w)
     _draw_scroll(painter, cx, base_y, body_w, state["scroll_unroll"])
 
     head_r = width * 0.30
@@ -169,6 +173,23 @@ def _draw_paws(painter, cx, base_y, body_w, forward, knead_l, knead_r, belly_col
         py = base_y - paw_h / 2 + lift_y * 0.2 - knead * knead_amount
         rect = QRectF(px - paw_w / 2, py - paw_h / 2 - forward * 6, paw_w, paw_h)
         painter.drawEllipse(rect)
+
+
+def _draw_food_bowl(painter, cx, base_y, body_w):
+    """A small drawn bowl in front of the pet while mood == "eat" -- the
+    chewing mouth alone read as gasping with nothing to actually chew on."""
+    bowl_w = body_w * 0.30
+    bowl_h = bowl_w * 0.45
+    bowl_y = base_y + bowl_h * 0.15
+
+    painter.setPen(QPen(OUTLINE, 1.5))
+    painter.setBrush(QBrush(FOOD_BOWL))
+    painter.drawEllipse(QRectF(cx - bowl_w / 2, bowl_y - bowl_h / 2, bowl_w, bowl_h))
+
+    kibble = QRectF(cx - bowl_w * 0.38, bowl_y - bowl_h * 0.30, bowl_w * 0.76, bowl_h * 0.55)
+    painter.setPen(NO_PEN)
+    painter.setBrush(QBrush(FOOD_KIBBLE))
+    painter.drawEllipse(kibble)
 
 
 def _draw_scroll(painter, cx, base_y, body_w, unroll):
