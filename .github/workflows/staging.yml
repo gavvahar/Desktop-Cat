@@ -1,0 +1,137 @@
+name: Staging Build
+
+on:
+  push:
+    branches:
+      - staging
+  workflow_dispatch:
+
+jobs:
+  build-appimage:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Build AppImage
+        run: bash packaging/appimage/build.sh
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: appimage
+          path: packaging/appimage/Desktop-Cat-x86_64.AppImage
+          if-no-files-found: error
+
+  build-windows-exe:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Build Windows executable
+        shell: pwsh
+        run: .\packaging\windows\build.ps1
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows-exe
+          path: packaging/windows/dist/Desktop-Cat-windows.zip
+          if-no-files-found: error
+
+  build-macos-app:
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Build macOS app
+        run: bash packaging/macos/build.sh
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macos-app
+          path: packaging/macos/dist/Desktop-Cat-macos.zip
+          if-no-files-found: error
+
+  build-flatpak:
+    runs-on: ubuntu-latest
+    container:
+      image: bilelmoussaoui/flatpak-github-actions:freedesktop-23.08
+      options: --privileged
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: flatpak/flatpak-github-actions/flatpak-builder@v6
+        with:
+          bundle: Desktop-Cat.flatpak
+          manifest-path: packaging/flatpak/io.github.gavvahar.DesktopCat.yml
+          cache-key: flatpak-builder-${{ github.sha }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: flatpak
+          path: Desktop-Cat.flatpak
+          if-no-files-found: error
+
+  publish-staging:
+    needs:
+      [
+        build-appimage,
+        build-windows-exe,
+        build-macos-app,
+        build-flatpak,
+      ]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: appimage
+          path: dist-assets
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: windows-exe
+          path: dist-assets
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: macos-app
+          path: dist-assets
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: flatpak
+          path: dist-assets
+
+      - name: Publish rolling staging pre-release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release delete staging --yes --cleanup-tag || true
+          gh release create staging \
+            --prerelease \
+            --target staging \
+            --title "Staging build ($(git rev-parse --short HEAD))" \
+            --notes "Automated staging build from commit $(git rev-parse HEAD). Not a versioned release -- for testing only." \
+            dist-assets/Desktop-Cat-x86_64.AppImage \
+            dist-assets/Desktop-Cat-windows.zip \
+            dist-assets/Desktop-Cat-macos.zip \
+            dist-assets/Desktop-Cat.flatpak
