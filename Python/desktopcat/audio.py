@@ -45,7 +45,9 @@ def _is_audio_playing_windows():
         return False
     try:
         speakers = AudioUtilities.GetSpeakers()
-        interface = speakers.Activate(IAudioMeterInformation._iid_, CLSCTX_ALL, None)
+        # GetSpeakers() returns pycaw's AudioDevice wrapper, not the raw
+        # IMMDevice -- the COM object with .Activate() is its private _dev.
+        interface = speakers._dev.Activate(IAudioMeterInformation._iid_, CLSCTX_ALL, None)
         meter = interface.QueryInterface(IAudioMeterInformation)
         return meter.GetPeakValue() > AUDIO_PEAK_THRESHOLD
     except Exception:
