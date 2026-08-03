@@ -87,13 +87,7 @@ jobs:
           if-no-files-found: error
 
   publish-staging:
-    needs:
-      [
-        build-appimage,
-        build-windows-exe,
-        build-macos-app,
-        build-flatpak,
-      ]
+    needs: [build-appimage, build-windows-exe, build-macos-app, build-flatpak]
     runs-on: ubuntu-latest
     permissions:
       contents: write
