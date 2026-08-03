@@ -7,5 +7,21 @@ dependencies:
   - python
   - pip
   - gh
+  # Runtime libs Qt's xcb platform plugin needs on a bare WSL2/minimal-Ubuntu
+  # host (a full Ubuntu Desktop install ships these already) -- without
+  # them PySide6 fails to load the xcb plugin at all. Installed here via
+  # conda-forge instead of apt so `conda env create` is enough on its own.
+  - xorg-libxcb
+  - libxkbcommon
+  - xcb-util-cursor
+  - xcb-util-wm
+  - xcb-util-keysyms
+  - xorg-libsm
+  # Compiler + Linux kernel/glibc headers -- needed only to build pynput's
+  # evdev C extension (its Wayland-fallback backend; this app only uses
+  # pynput's X11 backend, but pip still compiles evdev as a hard Linux
+  # dependency). Equivalent to apt's build-essential + linux-libc-dev.
+  - c-compiler
+  - sysroot_linux-64
   - pip:
       - -r requirements.txt
