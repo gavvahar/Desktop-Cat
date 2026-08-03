@@ -131,47 +131,53 @@ pattern from `reminders.show_message`, temporary-mood pattern like
       minutes; pixel-diff headphone-cup coordinates with `audio_playing` on/off
       for both `character = "cat"` and `"puppy"`.
 
-### Phase 10 — Sound effects + day/night sleep (planned, not started)
+### Phase 10 — Day/night-aware sleep (planned, not started)
 
-Two more additive features. Both again reuse existing architecture rather
-than introducing new machinery: the mood/pose system for sleep, and the
-same "best-effort, fail silently" philosophy as `peek.py`/`audio.py` for
-sound (no audio device/backend available just means no sound, not a crash).
+Reuses the existing mood/pose system rather than introducing new machinery.
 
-- [ ] **Sound effects** -- short cues layered onto reactions that already
-      exist (mouse-hunt/pounce, purr, feed, kneading). New
-      `Python/desktopcat/sound.py` using PySide6's `QSoundEffect`
-      (`QtMultimedia`), with a `play_cue(name)`-style API gated by a mute
-      toggle in Settings/config (same `config.py` DEFAULTS pattern as
-      existing toggles). Same licensing question sprite art already raised:
-      real meow/bark samples would need sourcing/recording, not something
-      to auto-generate -- default to simple procedurally-synthesized short
-      tones/blips (plain Python `wave`/`struct` sine-wave generation, no
-      external asset files) so the feature works out of the box, the same
-      way the app stayed asset-free procedural for visuals.
-- [ ] **Day/night-aware sleep** -- a new `"sleep"` mood after a period of no
-      interaction, or during a configurable night-hours window. Reuses
-      `_draw_closed_eye` (already used for blinking/happy eyes) for the
-      sleeping look, a new `POSE_TARGETS["sleep"]` entry, and a new
-      `elif mood == "sleep":` branch in `_draw_face`. Idle tracking follows
-      the existing `next_blink_at`-style timestamp pattern (a
-      `last_activity_at` field updated by every real reaction trigger --
-      mouse-hunt/purr/feed/kneading/scroll); night-hours check is a plain
-      local-time-of-day comparison, configurable start/end hour in Settings
-      like the existing reminder toggles. Any real interaction immediately
-      wakes the pet, same as how `pounce_ends_at`/`eat_ends_at` get
-      pre-empted by fresh triggers.
+- [ ] A new `"sleep"` mood after a period of no interaction, or during a
+      configurable night-hours window. Reuses `_draw_closed_eye` (already
+      used for blinking/happy eyes) for the sleeping look, a new
+      `POSE_TARGETS["sleep"]` entry, and a new `elif mood == "sleep":`
+      branch in `_draw_face`. Idle tracking follows the existing
+      `next_blink_at`-style timestamp pattern (a `last_activity_at` field
+      updated by every real reaction trigger -- mouse-hunt/purr/feed/
+      kneading/scroll); night-hours check is a plain local-time-of-day
+      comparison, configurable start/end hour in Settings like the existing
+      reminder toggles. Any real interaction immediately wakes the pet,
+      same as how `pounce_ends_at`/`eat_ends_at` get pre-empted by fresh
+      triggers.
 - [ ] Wiring: `state.py` (new fields + `POSE_TARGETS["sleep"]`),
-      `config.py` (mute toggle, night-hours window), `settings_ui.py`
-      (new controls), `window.py`/`input.py` (idle tracking + mood check),
-      `render.py` (sleep pose/face branch), sound-cue calls added at each
-      existing reaction's trigger site (mouse-hunt, purr, `feed_pet`,
-      kneading).
+      `config.py` (night-hours window), `settings_ui.py` (new controls),
+      `window.py`/`input.py` (idle tracking + mood check), `render.py`
+      (sleep pose/face branch).
 - [ ] Verify headlessly the same way as every prior feature
       (`QT_QPA_PLATFORM=offscreen`, real `CatWindow` pipeline, pixel checks
-      for the sleep pose; sound cues verified by confirming `play_cue`
-      doesn't raise when no audio backend is present, matching how
-      `audio._is_audio_playing_linux()` was verified to fail gracefully).
+      for the sleep pose).
+
+### Phase 11 — Sound effects (planned, not started)
+
+Follows the same "best-effort, fail silently" philosophy as
+`peek.py`/`audio.py` -- no audio device/backend available just means no
+sound, not a crash.
+
+- [ ] Short cues layered onto reactions that already exist (mouse-hunt/
+      pounce, purr, feed, kneading). New `Python/desktopcat/sound.py` using
+      PySide6's `QSoundEffect` (`QtMultimedia`), with a `play_cue(name)`-
+      style API gated by a mute toggle in Settings/config (same
+      `config.py` DEFAULTS pattern as existing toggles). Same licensing
+      question sprite art already raised: real meow/bark samples would
+      need sourcing/recording, not something to auto-generate -- default
+      to simple procedurally-synthesized short tones/blips (plain Python
+      `wave`/`struct` sine-wave generation, no external asset files) so
+      the feature works out of the box, the same way the app stayed
+      asset-free procedural for visuals.
+- [ ] Wiring: `config.py` (mute toggle), `settings_ui.py` (new control),
+      sound-cue calls added at each existing reaction's trigger site
+      (mouse-hunt, purr, `feed_pet`, kneading).
+- [ ] Verify by confirming `play_cue` doesn't raise when no audio backend
+      is present, matching how `audio._is_audio_playing_linux()` was
+      verified to fail gracefully.
 
 ---
 
