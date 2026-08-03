@@ -204,7 +204,11 @@ def main():
         )
 
         if merge.returncode == 0:
-            push = run(["git", "push", push_url, branch])
+            # Explicit refspec, not a bare branch name -- the "staging" branch
+            # collides with the "staging" tag (the rolling pre-release from
+            # staging.yml), which makes a bare `git push ... staging` fail
+            # with "src refspec staging matches more than one".
+            push = run(["git", "push", push_url, f"refs/heads/{branch}:refs/heads/{branch}"])
             if push.returncode == 0:
                 print("  ✓ Merged and pushed.")
             else:
