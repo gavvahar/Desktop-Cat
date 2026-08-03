@@ -4,6 +4,13 @@ on:
   push:
     branches:
       - main
+    # Doc/dev-tooling-only pushes shouldn't cut a release. The Flatpak
+    # manifest is deliberately NOT excluded here even though it's .yml --
+    # it changes what actually gets built/shipped, unlike these.
+    paths-ignore:
+      - "**.md"
+      - "enviroment.yml"
+      - ".github/workflows/*.yml"
   workflow_dispatch:
 
 jobs:
