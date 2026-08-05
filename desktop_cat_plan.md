@@ -131,11 +131,11 @@ pattern from `reminders.show_message`, temporary-mood pattern like
       minutes; pixel-diff headphone-cup coordinates with `audio_playing` on/off
       for both `character = "cat"` and `"puppy"`.
 
-### Phase 10 — Day/night-aware sleep (planned, not started)
+### Phase 10 — Day/night-aware sleep
 
 Reuses the existing mood/pose system rather than introducing new machinery.
 
-- [ ] A new `"sleep"` mood after a period of no interaction, or during a
+- [x] A new `"sleep"` mood after a period of no interaction, or during a
       configurable night-hours window. Reuses `_draw_closed_eye` (already
       used for blinking/happy eyes) for the sleeping look, a new
       `POSE_TARGETS["sleep"]` entry, and a new `elif mood == "sleep":`
@@ -147,11 +147,11 @@ Reuses the existing mood/pose system rather than introducing new machinery.
       reminder toggles. Any real interaction immediately wakes the pet,
       same as how `pounce_ends_at`/`eat_ends_at` get pre-empted by fresh
       triggers.
-- [ ] Wiring: `state.py` (new fields + `POSE_TARGETS["sleep"]`),
+- [x] Wiring: `state.py` (new fields + `POSE_TARGETS["sleep"]`),
       `config.py` (night-hours window), `settings_ui.py` (new controls),
       `window.py`/`input.py` (idle tracking + mood check), `render.py`
       (sleep pose/face branch).
-- [ ] Verify headlessly the same way as every prior feature
+- [x] Verify headlessly the same way as every prior feature
       (`QT_QPA_PLATFORM=offscreen`, real `CatWindow` pipeline, pixel checks
       for the sleep pose).
 

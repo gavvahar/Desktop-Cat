@@ -20,6 +20,12 @@ DEFAULTS = {
         "pinned_message": "",
     },
     "pomodoro": {"enabled": False, "focus_minutes": 25, "break_minutes": 5},
+    "sleep": {
+        "idle_minutes": 15,  # falls asleep after this long with no interaction
+        "night_mode_enabled": False,
+        "night_start_hour": 23,  # 24h local time
+        "night_end_hour": 6,
+    },
 }
 
 

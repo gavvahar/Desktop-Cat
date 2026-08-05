@@ -78,7 +78,38 @@ def update_mood(state, now, cursor_pos):
         state["mood"] = "purr"
         return
 
+    if _should_sleep(state, now):
+        state["mood"] = "sleep"
+        return
+
     state["mood"] = "idle"
+
+
+def _in_night_window(start_hour, end_hour):
+    if start_hour == end_hour:
+        return False
+    hour = time.localtime().tm_hour
+    if start_hour < end_hour:
+        return start_hour <= hour < end_hour
+    return hour >= start_hour or hour < end_hour  # wraps past midnight
+
+
+def _should_sleep(state, now):
+    sleep_cfg = state["config"]["sleep"]
+    if now - state["last_activity_at"] >= sleep_cfg["idle_minutes"] * 60:
+        return True
+    if sleep_cfg["night_mode_enabled"]:
+        return _in_night_window(sleep_cfg["night_start_hour"], sleep_cfg["night_end_hour"])
+    return False
+
+
+def update_activity(state, now):
+    """Refreshes last_activity_at on any real interaction -- used by
+    _should_sleep to know how long the pet has been left alone. Checked
+    independently of mood since dragging/kneading/scrolling don't set mood."""
+    active = state["dragging"] or state["kneading"] or state["scrolling"] or state["mood"] in ("hunt", "purr", "pounce", "eat")
+    if active:
+        state["last_activity_at"] = now
 
 
 def update_eye_target(state, cursor_pos):
