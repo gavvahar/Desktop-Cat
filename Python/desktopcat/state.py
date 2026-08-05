@@ -135,6 +135,7 @@ def new_state():
         "audio_next_at": 0.0,
         "audio_poll_running": False,
         "audio_poll_result": None,  # set by the background poll thread; None until the first one finishes
+        "last_activity_at": now,  # refreshed by any real interaction; drives idle-based sleep
         "pose": {
             "crouch": 0.0,
             "ear_flatten": 0.0,
@@ -153,4 +154,5 @@ POSE_TARGETS = {
     "pounce": {"crouch": 0.8, "ear_flatten": 0.9, "eye_wide": 1.0, "paws_forward": 1.0},
     "purr": {"crouch": 0.1, "ear_flatten": 0.0, "eye_wide": 0.0, "paws_forward": 0.0},
     "eat": {"crouch": 0.3, "ear_flatten": 0.1, "eye_wide": 0.0, "paws_forward": 0.8},
+    "sleep": {"crouch": 0.7, "ear_flatten": 0.4, "eye_wide": 0.0, "paws_forward": 0.0},
 }
