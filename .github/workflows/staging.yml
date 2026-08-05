@@ -126,8 +126,12 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release delete staging --yes --cleanup-tag || true
-          gh release create staging \
+          # Tag deliberately NOT "staging" -- that collides with the staging
+          # *branch* name, which makes plain `git push`/`pull origin staging`
+          # ambiguous ("refname 'staging' is ambiguous") or silently resolve
+          # to the wrong ref entirely.
+          gh release delete staging-latest --yes --cleanup-tag || true
+          gh release create staging-latest \
             --prerelease \
             --target staging \
             --title "Staging build ($(git rev-parse --short HEAD))" \
