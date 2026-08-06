@@ -1,6 +1,6 @@
 services:
   web:
-    build: .
+    build: ./site
     image: desktopcat-site:latest
     restart: unless-stopped
     env_file:
