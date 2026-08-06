@@ -6,9 +6,8 @@ for how those releases get published; asset filenames here must match
 what those workflows actually upload.
 """
 
-import os
+import os, requests
 
-import requests
 from django.core.cache import cache
 from django.utils.dateparse import parse_datetime
 

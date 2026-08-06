@@ -16,10 +16,13 @@
     var detected = detectPlatform();
     var heroButton = document.querySelector("[data-hero-download]");
     if (detected && heroButton) {
-      var target = document.querySelector('[data-platform-link="' + detected + '"][data-channel="prod"]');
+      var target = document.querySelector(
+        '[data-platform-link="' + detected + '"][data-channel="prod"]',
+      );
       if (target) {
         heroButton.setAttribute("href", target.getAttribute("href"));
-        heroButton.textContent = "Download for " + target.getAttribute("data-platform-label");
+        heroButton.textContent =
+          "Download for " + target.getAttribute("data-platform-label");
       }
     }
 
@@ -32,7 +35,10 @@
           t.classList.toggle("active", t === tab);
         });
         panels.forEach(function (p) {
-          p.classList.toggle("active", p.getAttribute("data-channel-panel") === channel);
+          p.classList.toggle(
+            "active",
+            p.getAttribute("data-channel-panel") === channel,
+          );
         });
       });
     });

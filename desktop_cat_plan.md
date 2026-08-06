@@ -164,7 +164,7 @@ sound, not a crash.
 - [x] Short cues layered onto reactions that already exist (mouse-hunt/
       pounce, purr, feed, kneading). New `Python/desktopcat/sound.py` using
       PySide6's `QSoundEffect` (`QtMultimedia`), with a `play_cue(state,
-    name)`-style API gated by a mute toggle in Settings/config (same
+  name)`-style API gated by a mute toggle in Settings/config (same
       `config.py` DEFAULTS pattern as existing toggles). Real meow/bark
       samples would need sourcing/recording (same licensing question sprite
       art already raised), so cues are simple procedurally-synthesized

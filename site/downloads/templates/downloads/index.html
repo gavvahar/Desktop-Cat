@@ -1,5 +1,4 @@
-{% extends "base.html" %}
-{% block content %}
+{% extends "base.html" %} {% block content %}
 <header class="site-header">
   <a class="brand" href="#top">🐱 Desktop Cat</a>
   <nav>
@@ -13,11 +12,13 @@
   <h1>A tiny pixel cat that lives on your desktop.</h1>
   <p>
     Free and open-source. Always-on-top, reacts to your mouse, keyboard, and
-    scroll, and nags you to stretch, drink water, and take breaks.
-    No accounts, no telemetry, no payments. Ever.
+    scroll, and nags you to stretch, drink water, and take breaks. No accounts,
+    no telemetry, no payments. Ever.
   </p>
   <div class="hero-actions">
-    <a class="btn btn-primary" data-hero-download href="#download">Get Desktop Cat</a>
+    <a class="btn btn-primary" data-hero-download href="#download"
+      >Get Desktop Cat</a
+    >
     <a class="btn btn-secondary" href="#download">All platforms</a>
   </div>
 </section>
@@ -31,7 +32,9 @@
         <li>Chases fast cursor movement, pounces on a sudden stop</li>
         <li>Purrs when you gently move the cursor over its head</li>
         <li>Pick it up and drag it around — squash, stretch, and wobble</li>
-        <li>Kneads while you type; overheats (and steams) if you type too fast</li>
+        <li>
+          Kneads while you type; overheats (and steams) if you type too fast
+        </li>
         <li>Unrolls like paper when you scroll</li>
       </ul>
     </div>
@@ -59,7 +62,9 @@
         <li>Feed it — a hunger meter that nags if you forget</li>
         <li>Draws headphones on when you're playing audio</li>
         <li>Steps aside during fullscreen video (X11)</li>
-        <li>Thinking-along / done-jump hooks for Claude Code, Codex, and Cursor</li>
+        <li>
+          Thinking-along / done-jump hooks for Claude Code, Codex, and Cursor
+        </li>
       </ul>
     </div>
   </div>
@@ -69,23 +74,33 @@
   <h2>Download</h2>
   <div class="channel-tabs">
     <button type="button" data-channel-tab="prod" class="active">Stable</button>
-    <button type="button" data-channel-tab="staging">Staging (bleeding edge)</button>
+    <button type="button" data-channel-tab="staging">
+      Staging (bleeding edge)
+    </button>
   </div>
 
   <div data-channel-panel="prod" class="channel-panel active">
-    {% include "downloads/_release_panel.html" with release=prod channel="prod" %}
+    {% include "downloads/_release_panel.html" with release=prod channel="prod"
+    %}
   </div>
   <div data-channel-panel="staging" class="channel-panel">
-    {% include "downloads/_release_panel.html" with release=staging channel="staging" %}
-    <p class="channel-note">Rebuilt from the tip of the <code>staging</code> branch on every change. May be broken. Not versioned.</p>
+    {% include "downloads/_release_panel.html" with release=staging
+    channel="staging" %}
+    <p class="channel-note">
+      Rebuilt from the tip of the <code>staging</code> branch on every change.
+      May be broken. Not versioned.
+    </p>
   </div>
 </section>
 
 <footer>
   <p>
     MIT licensed ·
-    <a href="{{ repo_url }}" target="_blank" rel="noopener">source on GitHub</a> ·
-    <a href="{{ repo_url }}/blob/main/INSTALL.md" target="_blank" rel="noopener">build from source</a>
+    <a href="{{ repo_url }}" target="_blank" rel="noopener">source on GitHub</a>
+    ·
+    <a href="{{ repo_url }}/blob/main/INSTALL.md" target="_blank" rel="noopener"
+      >build from source</a
+    >
   </p>
 </footer>
 {% endblock %}

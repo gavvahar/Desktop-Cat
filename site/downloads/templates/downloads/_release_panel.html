@@ -1,17 +1,26 @@
 {% if release %}
 <p class="release-meta">
   <strong>{{ release.tag }}</strong>
-  {% if release.published_at %}<span class="release-date">published {{ release.published_at|date:"M j, Y" }}</span>{% endif %}
-  <a href="{{ release.html_url }}" target="_blank" rel="noopener">release notes ↗</a>
+  {% if release.published_at %}<span class="release-date"
+    >published {{ release.published_at|date:"M j, Y" }}</span
+  >{% endif %}
+  <a href="{{ release.html_url }}" target="_blank" rel="noopener"
+    >release notes ↗</a
+  >
 </p>
 <div class="platform-grid">
   {% for p in release.platforms %}
-  <a class="platform-card"
-     href="{{ p.url }}"
-     data-platform-link="{{ p.key }}"
-     data-channel="{{ channel }}"
-     data-platform-label="{{ p.label }}">
-    <span class="platform-icon">{% if p.key == "linux" %}🐧{% elif p.key == "windows" %}🪟{% elif p.key == "macos" %}🍎{% elif p.key == "flatpak" %}📦{% endif %}</span>
+  <a
+    class="platform-card"
+    href="{{ p.url }}"
+    data-platform-link="{{ p.key }}"
+    data-channel="{{ channel }}"
+    data-platform-label="{{ p.label }}"
+  >
+    <span class="platform-icon"
+      >{% if p.key == "linux" %}🐧{% elif p.key == "windows" %}🪟{% elif p.key
+      == "macos" %}🍎{% elif p.key == "flatpak" %}📦{% endif %}</span
+    >
     <span class="platform-name">{{ p.label }}</span>
     <span class="platform-file">{{ p.name }} · {{ p.size_mb }} MB</span>
   </a>
@@ -19,11 +28,12 @@
 </div>
 {% else %}
 <p class="release-unavailable">
-  {% if channel == "staging" %}
-    No staging build has been published yet — check back soon.
-  {% else %}
-    Couldn't reach GitHub to fetch the latest release right now — grab it from the
-    <a href="{{ repo_url }}/releases" target="_blank" rel="noopener">releases page</a> directly.
-  {% endif %}
+  {% if channel == "staging" %} No staging build has been published yet — check
+  back soon. {% else %} Couldn't reach GitHub to fetch the latest release right
+  now — grab it from the
+  <a href="{{ repo_url }}/releases" target="_blank" rel="noopener"
+    >releases page</a
+  >
+  directly. {% endif %}
 </p>
 {% endif %}
