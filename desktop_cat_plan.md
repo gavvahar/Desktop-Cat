@@ -155,29 +155,37 @@ Reuses the existing mood/pose system rather than introducing new machinery.
       (`QT_QPA_PLATFORM=offscreen`, real `CatWindow` pipeline, pixel checks
       for the sleep pose).
 
-### Phase 11 — Sound effects (planned, not started)
+### Phase 11 — Sound effects
 
 Follows the same "best-effort, fail silently" philosophy as
 `peek.py`/`audio.py` -- no audio device/backend available just means no
 sound, not a crash.
 
-- [ ] Short cues layered onto reactions that already exist (mouse-hunt/
+- [x] Short cues layered onto reactions that already exist (mouse-hunt/
       pounce, purr, feed, kneading). New `Python/desktopcat/sound.py` using
-      PySide6's `QSoundEffect` (`QtMultimedia`), with a `play_cue(name)`-
-      style API gated by a mute toggle in Settings/config (same
-      `config.py` DEFAULTS pattern as existing toggles). Same licensing
-      question sprite art already raised: real meow/bark samples would
-      need sourcing/recording, not something to auto-generate -- default
-      to simple procedurally-synthesized short tones/blips (plain Python
-      `wave`/`struct` sine-wave generation, no external asset files) so
-      the feature works out of the box, the same way the app stayed
-      asset-free procedural for visuals.
-- [ ] Wiring: `config.py` (mute toggle), `settings_ui.py` (new control),
-      sound-cue calls added at each existing reaction's trigger site
-      (mouse-hunt, purr, `feed_pet`, kneading).
-- [ ] Verify by confirming `play_cue` doesn't raise when no audio backend
-      is present, matching how `audio._is_audio_playing_linux()` was
-      verified to fail gracefully.
+      PySide6's `QSoundEffect` (`QtMultimedia`), with a `play_cue(state,
+      name)`-style API gated by a mute toggle in Settings/config (same
+      `config.py` DEFAULTS pattern as existing toggles). Real meow/bark
+      samples would need sourcing/recording (same licensing question sprite
+      art already raised), so cues are simple procedurally-synthesized
+      short tones (plain Python `wave`/`struct` sine-wave generation, no
+      external asset files, cached as small `.wav` files under a temp
+      dir) -- same asset-free-procedural approach the app uses for visuals.
+- [x] Wiring: `config.py` (`"sound": {"enabled": True}`), `settings_ui.py`
+      (new checkbox control), sound-cue calls added at each existing
+      reaction's trigger site -- `input.py`'s `update_mood` (hunt/pounce/
+      purr, one-shot per mood transition, not every frame) and
+      `update_kneading_anim` (kneading, one-shot per session), and
+      `feeding.feed_pet`. Kneading's cue deliberately lives in
+      `update_kneading_anim` (runs on the GUI thread via `tick()`) rather
+      than `on_key_press` (runs on the pynput listener thread) -- the rest
+      of this app never touches a Qt object from that thread, only plain
+      dict fields, and `QSoundEffect.play()` is no exception.
+- [x] Verified headlessly the same way as every prior feature
+      (`QT_QPA_PLATFORM=offscreen`, real `CatWindow` pipeline): every cue
+      plays without raising, generated `.wav` files are valid, the mute
+      toggle suppresses playback, and the kneading cue fires once per
+      session rather than once per keypress.
 
 ---
 
