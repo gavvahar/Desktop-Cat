@@ -92,6 +92,7 @@ def new_state():
         "kneading_ends_at": 0.0,
         "knead_envelope": 0.0,
         "knead_phase": 0.0,
+        "knead_cue_played": False,
         "key_press_times": [],
         "heat": 0.0,
         "steam_particles": [],  # list of {dx, rise, age, life, drift_speed}

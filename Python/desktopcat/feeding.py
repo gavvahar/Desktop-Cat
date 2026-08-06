@@ -4,6 +4,7 @@ long without feeding. Plain functions -- no classes.
 """
 
 from desktopcat import reminders
+from desktopcat import sound
 
 HUNGER_FULL_AFTER_MINUTES = 20.0  # time with no feeding to go from 0.0 -> 1.0
 HUNGER_RISE_RATE = 1.0 / (HUNGER_FULL_AFTER_MINUTES * 60.0)  # per second
@@ -27,3 +28,4 @@ def feed_pet(state, now):
     state["hunger_nagged"] = False
     state["eat_ends_at"] = now + EAT_DURATION
     state["mood"] = "eat"  # set immediately so this frame's repaint already shows it
+    sound.play_cue(state, "feed")

@@ -26,6 +26,7 @@ DEFAULTS = {
         "night_start_hour": 23,  # 24h local time
         "night_end_hour": 6,
     },
+    "sound": {"enabled": True},
 }
 
 

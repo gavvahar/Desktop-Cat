@@ -4,6 +4,7 @@ state dict from state.py.
 
 import random, time
 
+from desktopcat import sound
 from desktopcat import state as st
 
 
@@ -67,14 +68,19 @@ def update_mood(state, now, cursor_pos):
     if was_hunting and decel < -st.POUNCE_DECEL:
         state["mood"] = "pounce"
         state["pounce_ends_at"] = now + st.POUNCE_DURATION
+        sound.play_cue(state, "pounce")
         return
 
     if velocity > st.HUNT_VELOCITY:
+        if state["mood"] != "hunt":
+            sound.play_cue(state, "hunt")
         state["mood"] = "hunt"
         return
 
     over_head = point_in_head_region(state["window_pos"], cursor_pos)
     if over_head and 0 < velocity < st.PURR_MAX_VELOCITY:
+        if state["mood"] != "purr":
+            sound.play_cue(state, "purr")
         state["mood"] = "purr"
         return
 
@@ -163,6 +169,9 @@ def end_drag(state):
 
 
 def on_key_press(state, now):
+    # Runs on the pynput listener thread -- only ever touches plain dict
+    # fields here, never a Qt object (QSoundEffect.play() included), same
+    # rule the rest of this app follows for its background threads.
     state["kneading"] = True
     state["kneading_ends_at"] = now + st.KNEADING_HOLD
     state["key_press_times"].append(now)
@@ -174,6 +183,15 @@ def update_kneading(state, now):
 
 
 def update_kneading_anim(state, dt):
+    # Runs on the GUI thread (called from tick()), unlike on_key_press --
+    # the right place for the one-shot "kneading just started" sound cue.
+    if state["kneading"]:
+        if not state["knead_cue_played"]:
+            sound.play_cue(state, "knead")
+            state["knead_cue_played"] = True
+    else:
+        state["knead_cue_played"] = False
+
     target = 1.0 if state["kneading"] else 0.0
     lerp = min(1.0, dt * st.KNEAD_ENVELOPE_SPEED)
     state["knead_envelope"] += (target - state["knead_envelope"]) * lerp
