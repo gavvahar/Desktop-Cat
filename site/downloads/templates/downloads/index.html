@@ -80,12 +80,10 @@
   </div>
 
   <div data-channel-panel="prod" class="channel-panel active">
-    {% include "downloads/_release_panel.html" with release=prod channel="prod"
-    %}
+    {% include "downloads/_release_panel.html" with release=prod channel="prod" %}
   </div>
   <div data-channel-panel="staging" class="channel-panel">
-    {% include "downloads/_release_panel.html" with release=staging
-    channel="staging" %}
+    {% include "downloads/_release_panel.html" with release=staging channel="staging" %}
     <p class="channel-note">
       Rebuilt from the tip of the <code>staging</code> branch on every change.
       May be broken. Not versioned.

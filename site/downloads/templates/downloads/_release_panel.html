@@ -18,8 +18,7 @@
     data-platform-label="{{ p.label }}"
   >
     <span class="platform-icon"
-      >{% if p.key == "linux" %}🐧{% elif p.key == "windows" %}🪟{% elif p.key
-      == "macos" %}🍎{% elif p.key == "flatpak" %}📦{% endif %}</span
+      >{% if p.key == "linux" %}🐧{% elif p.key == "windows" %}🪟{% elif p.key == "macos" %}🍎{% elif p.key == "flatpak" %}📦{% endif %}</span
     >
     <span class="platform-name">{{ p.label }}</span>
     <span class="platform-file">{{ p.name }} · {{ p.size_mb }} MB</span>

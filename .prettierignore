@@ -1,0 +1,5 @@
+# Django templates -- contain {% %} / {{ }} tags Prettier's plain HTML
+# parser doesn't understand. It line-wraps long tags like ordinary text,
+# which breaks Django's tag tokenizer (its {%...%} regex doesn't match
+# across a newline) and turns the tag into literal rendered output.
+site/**/templates/**/*.html
