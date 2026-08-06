@@ -1,3 +1,4 @@
+-r site/requirements.txt
 PySide6
 pynput
 pycaw; sys_platform == "win32"
