@@ -4,15 +4,12 @@
   {% if release.published_at %}<span class="release-date"
     >published {{ release.published_at|date:"M j, Y" }}</span
   >{% endif %}
-  <a href="{{ release.html_url }}" target="_blank" rel="noopener"
-    >release notes ↗</a
-  >
 </p>
 <div class="platform-grid">
   {% for p in release.platforms %}
   <a
     class="platform-card"
-    href="{{ p.url }}"
+    href="{% url 'download_asset' channel=channel platform_key=p.key %}"
     data-platform-link="{{ p.key }}"
     data-channel="{{ channel }}"
     data-platform-label="{{ p.label }}"
@@ -25,14 +22,16 @@
   </a>
   {% endfor %}
 </div>
+{% if release.notes_html %}
+<details class="release-notes">
+  <summary>Release notes</summary>
+  <div class="release-notes-body">{{ release.notes_html|safe }}</div>
+</details>
+{% endif %}
 {% else %}
 <p class="release-unavailable">
   {% if channel == "staging" %} No staging build has been published yet — check
   back soon. {% else %} Couldn't reach GitHub to fetch the latest release right
-  now — grab it from the
-  <a href="{{ repo_url }}/releases" target="_blank" rel="noopener"
-    >releases page</a
-  >
-  directly. {% endif %}
+  now — try again in a moment. {% endif %}
 </p>
 {% endif %}

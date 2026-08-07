@@ -4,7 +4,7 @@
   <nav>
     <a href="#features">Features</a>
     <a href="#download">Download</a>
-    <a href="{{ repo_url }}" target="_blank" rel="noopener">GitHub</a>
+    <a href="#instructions">Instructions</a>
   </nav>
 </header>
 
@@ -88,6 +88,60 @@
       Rebuilt from the tip of the <code>staging</code> branch on every change.
       May be broken. Not versioned.
     </p>
+  </div>
+</section>
+
+<section id="instructions" class="instructions">
+  <h2>How to run it</h2>
+  <div class="instructions-grid">
+    <div class="instructions-card">
+      <h3>🪟 Windows</h3>
+      <p>
+        Download <code>Desktop-Cat-windows.zip</code>, extract it, and run
+        <code>desktop-cat.exe</code> from inside the extracted folder.
+      </p>
+      <p>
+        If Windows Defender or SmartScreen flags it: right-click the
+        <code>.exe</code> → Properties → Unblock, or click "More info" →
+        "Run anyway". It's unsigned (no code-signing certificate involved
+        in this project) and unfamiliar to Windows, which commonly
+        triggers that warning on its own.
+      </p>
+    </div>
+    <div class="instructions-card">
+      <h3>🐧 Linux (AppImage)</h3>
+      <p>Download <code>Desktop-Cat-x86_64.AppImage</code>, then:</p>
+      <pre><code>chmod +x Desktop-Cat-x86_64.AppImage
+./Desktop-Cat-x86_64.AppImage</code></pre>
+      <p>No installation step — it's a single self-contained file, run it directly.</p>
+    </div>
+    <div class="instructions-card">
+      <h3>📦 Linux (Flatpak)</h3>
+      <p>Download <code>Desktop-Cat.flatpak</code>, then:</p>
+      <pre><code>flatpak install --user Desktop-Cat.flatpak
+flatpak run io.github.gavvahar.DesktopCat</code></pre>
+      <p>
+        Drop <code>--user</code> for a system-wide install. Once installed,
+        it also shows up in your desktop's app launcher as "Desktop Cat".
+      </p>
+    </div>
+    <div class="instructions-card">
+      <h3>🍎 macOS</h3>
+      <p>
+        Download <code>Desktop-Cat-macos.zip</code>, unzip it, then
+        <strong>right-click</strong> (not double-click)
+        <code>Desktop Cat.app</code> → Open → Open. It's unsigned (no
+        Apple Developer account involved in this project), so a plain
+        double-click gets blocked by Gatekeeper.
+      </p>
+      <p>
+        Keyboard/scroll reactions additionally need
+        <strong>Accessibility permission</strong>: System Settings →
+        Privacy &amp; Security → Accessibility → enable it for Desktop
+        Cat. Without it, those reactions just silently don't fire —
+        everything else still works.
+      </p>
+    </div>
   </div>
 </section>
 

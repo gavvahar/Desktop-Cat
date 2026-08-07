@@ -156,6 +156,60 @@ h2 {
   margin-bottom: 8px;
 }
 
+.instructions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+.instructions-card {
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px;
+}
+
+.instructions-card h3 {
+  margin: 0 0 12px;
+  font-size: 17px;
+}
+
+.instructions-card p {
+  color: var(--text-dim);
+  font-size: 14px;
+  margin: 0 0 12px;
+}
+
+.instructions-card p:last-child {
+  margin-bottom: 0;
+}
+
+.instructions-card code {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-size: 13px;
+  color: var(--text);
+}
+
+.instructions-card pre {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin: 0 0 12px;
+  overflow-x: auto;
+}
+
+.instructions-card pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
 .download {
   text-align: center;
 }
@@ -204,10 +258,6 @@ h2 {
   color: var(--text);
 }
 
-.release-meta a {
-  margin-left: 8px;
-}
-
 .release-unavailable {
   color: var(--text-dim);
   padding: 30px 0;
@@ -217,6 +267,77 @@ h2 {
   color: var(--text-dim);
   font-size: 13px;
   margin-top: 20px;
+}
+
+.release-notes {
+  text-align: left;
+  margin-top: 24px;
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+}
+
+.release-notes summary {
+  cursor: pointer;
+  color: var(--text-dim);
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.release-notes summary:hover {
+  color: var(--text);
+}
+
+.release-notes-body {
+  margin-top: 16px;
+  color: var(--text-dim);
+  font-size: 14px;
+  line-height: 1.6;
+  max-width: 640px;
+}
+
+.release-notes-body h1,
+.release-notes-body h2,
+.release-notes-body h3 {
+  color: var(--text);
+  font-size: 15px;
+  margin: 20px 0 8px;
+}
+
+.release-notes-body h1:first-child,
+.release-notes-body h2:first-child,
+.release-notes-body h3:first-child {
+  margin-top: 0;
+}
+
+.release-notes-body ul,
+.release-notes-body ol {
+  margin: 0 0 12px;
+  padding-left: 20px;
+}
+
+.release-notes-body p {
+  margin: 0 0 12px;
+}
+
+.release-notes-body code {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-size: 13px;
+  color: var(--text);
+}
+
+.release-notes-body pre {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 14px;
+  overflow-x: auto;
+}
+
+.release-notes-body a {
+  color: var(--accent);
 }
 
 .platform-grid {
