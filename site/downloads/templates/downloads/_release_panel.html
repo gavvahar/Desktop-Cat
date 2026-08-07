@@ -12,7 +12,7 @@
   {% for p in release.platforms %}
   <a
     class="platform-card"
-    href="{{ p.url }}"
+    href="{% url 'download_asset' channel=channel platform_key=p.key %}"
     data-platform-link="{{ p.key }}"
     data-channel="{{ channel }}"
     data-platform-label="{{ p.label }}"
