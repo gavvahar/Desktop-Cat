@@ -37,7 +37,11 @@ def _auth_header():
 
 
 def _fetch(url):
-    headers = {"Accept": "application/vnd.github+json", **_auth_header()}
+    # The .html+json media type asks GitHub to also render the release
+    # body to sanitized HTML (as `body_html`) server-side, so we can embed
+    # release notes on the site without pulling in a markdown library or
+    # sanitizing untrusted markdown ourselves.
+    headers = {"Accept": "application/vnd.github.html+json", **_auth_header()}
     try:
         resp = requests.get(url, headers=headers, timeout=REQUEST_TIMEOUT)
     except requests.RequestException:
@@ -70,6 +74,7 @@ def _release_info(release):
         # filter needs an actual datetime to format it, not a string.
         "published_at": parse_datetime(release["published_at"]) if release.get("published_at") else None,
         "html_url": release.get("html_url"),
+        "notes_html": release.get("body_html", ""),
         "platforms": platforms,
     }
 
