@@ -137,6 +137,7 @@ def tick(window):
         cat_input.update_steam_particles(state, dt)
         cat_input.update_scrolling(state, now)
         cat_input.update_scroll_anim(state, dt)
+    cat_input.update_activity(state, now)
     cat_input.update_pose(state, dt)
 
     peek.update_peek_mode(state, now)

@@ -351,7 +351,7 @@ def _draw_face(painter, state, cx, head_cy, r, now, nose_color=PINK, iris_color=
 
     for side in (-1, 1):
         ex = cx + side * eye_dx
-        if happy or blinking:
+        if happy or blinking or mood == "sleep":
             _draw_closed_eye(painter, ex, eye_y, eye_w, happy)
         else:
             painter.setPen(QPen(OUTLINE, 1.5))
@@ -395,6 +395,8 @@ def _draw_face(painter, state, cx, head_cy, r, now, nose_color=PINK, iris_color=
         mw, mh = r * 0.16, r * (0.08 + 0.10 * chew)
         painter.setBrush(QBrush(OUTLINE))
         painter.drawEllipse(QPointF(cx, mouth_y + r * 0.02), mw / 2, mh / 2)
+    elif mood == "sleep":
+        painter.drawLine(QPointF(cx - r * 0.06, mouth_y), QPointF(cx + r * 0.06, mouth_y))
     else:
         painter.drawArc(QRectF(cx - r * 0.12, mouth_y - r * 0.04, r * 0.24, r * 0.12), 200 * 16, 140 * 16)
 

@@ -17,11 +17,19 @@ dependencies:
   - xcb-util-wm
   - xcb-util-keysyms
   - xorg-libsm
-  # Compiler + Linux kernel/glibc headers -- needed only to build pynput's
-  # evdev C extension (its Wayland-fallback backend; this app only uses
-  # pynput's X11 backend, but pip still compiles evdev as a hard Linux
-  # dependency). Equivalent to apt's build-essential + linux-libc-dev.
-  - c-compiler
-  - sysroot_linux-64
   - pip:
       - -r requirements.txt
+
+# pynput hard-depends on evdev on Linux (its Wayland-fallback backend; this
+# app only uses pynput's X11 backend, but pip still compiles evdev as a
+# hard dependency). evdev's setup.py scans the host's real
+# /usr/include/linux/*.h to decide which kernel input-event macros to
+# reference in its C extension. conda's own cross-compiler toolchain
+# (c-compiler + sysroot_linux-64) bundles its own much older copy of those
+# same headers and silently substitutes it in at actual compile time via
+# --sysroot, so the build ends up referencing macros (e.g. KEY_DICTATE,
+# added in newer kernels) that don't exist in the headers it's actually
+# compiling against -- and fails. The plain host gcc + the kernel headers
+# that ship with it (apt's build-essential + linux-libc-dev) don't have
+# this mismatch, since both steps then resolve to the same headers. Build
+# this env with `CC=gcc conda env create -f enviroment.yml`.

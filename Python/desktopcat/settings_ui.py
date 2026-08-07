@@ -92,6 +92,27 @@ def open_settings_dialog(window):
     layout.addRow("  focus (minutes):", focus_spin)
     layout.addRow("  break (minutes):", break_spin)
 
+    sleep_idle_spin = QSpinBox()
+    sleep_idle_spin.setRange(1, 480)
+    sleep_idle_spin.setValue(config["sleep"]["idle_minutes"])
+    layout.addRow("Falls asleep after (minutes idle):", sleep_idle_spin)
+
+    night_mode_check = QCheckBox("Enabled")
+    night_mode_check.setChecked(config["sleep"]["night_mode_enabled"])
+    night_start_spin = QSpinBox()
+    night_start_spin.setRange(0, 23)
+    night_start_spin.setValue(config["sleep"]["night_start_hour"])
+    night_end_spin = QSpinBox()
+    night_end_spin.setRange(0, 23)
+    night_end_spin.setValue(config["sleep"]["night_end_hour"])
+    layout.addRow("Night-hours sleep:", night_mode_check)
+    layout.addRow("  start hour (0-23):", night_start_spin)
+    layout.addRow("  end hour (0-23):", night_end_spin)
+
+    sound_check = QCheckBox("Enabled")
+    sound_check.setChecked(config["sound"]["enabled"])
+    layout.addRow("Sound effects:", sound_check)
+
     autostart_check = QCheckBox("Start automatically at login")
     autostart_check.setChecked(autostart.is_enabled())
     layout.addRow(autostart_check)
@@ -116,6 +137,13 @@ def open_settings_dialog(window):
                 "focus_minutes": focus_spin.value(),
                 "break_minutes": break_spin.value(),
             },
+            "sleep": {
+                "idle_minutes": sleep_idle_spin.value(),
+                "night_mode_enabled": night_mode_check.isChecked(),
+                "night_start_hour": night_start_spin.value(),
+                "night_end_hour": night_end_spin.value(),
+            },
+            "sound": {"enabled": sound_check.isChecked()},
         }
         cat_config.save_config(new_config)
         apply_config(window, new_config)
