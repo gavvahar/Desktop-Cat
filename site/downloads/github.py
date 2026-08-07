@@ -14,6 +14,11 @@ from django.utils.dateparse import parse_datetime
 GITHUB_REPO = os.environ.get("GITHUB_REPO", "gavvahar/Desktop-Cat")
 GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN", "")
 CACHE_TTL_SECONDS = 300
+# A failed fetch (network blip, GitHub hiccup) shouldn't black out the
+# download page for a full 5 minutes -- retry much sooner. Applies equally
+# to a legitimate "no release published yet" 404 (e.g. staging before its
+# first run), which just means checking a bit more often than necessary.
+NEGATIVE_CACHE_TTL_SECONDS = 30
 REQUEST_TIMEOUT = 5
 
 # (key, display label, filename matcher) -- order here is display order.
@@ -27,16 +32,14 @@ ASSET_MATCHERS = [
 _MISS = object()  # distinguishes "not cached" from "cached, and the value is None"
 
 
-def _headers():
-    headers = {"Accept": "application/vnd.github+json"}
-    if GITHUB_TOKEN:
-        headers["Authorization"] = f"Bearer {GITHUB_TOKEN}"
-    return headers
+def _auth_header():
+    return {"Authorization": f"Bearer {GITHUB_TOKEN}"} if GITHUB_TOKEN else {}
 
 
 def _fetch(url):
+    headers = {"Accept": "application/vnd.github+json", **_auth_header()}
     try:
-        resp = requests.get(url, headers=_headers(), timeout=REQUEST_TIMEOUT)
+        resp = requests.get(url, headers=headers, timeout=REQUEST_TIMEOUT)
     except requests.RequestException:
         return None
     if resp.status_code != 200:
@@ -57,7 +60,7 @@ def _release_info(release):
                     "key": key,
                     "label": label,
                     "name": asset["name"],
-                    "url": asset["browser_download_url"],
+                    "id": asset["id"],
                     "size_mb": round(asset["size"] / (1024 * 1024), 1),
                 }
             )
@@ -76,7 +79,7 @@ def _cached(cache_key, url):
     if cached is not _MISS:
         return cached
     info = _release_info(_fetch(url))
-    cache.set(cache_key, info, CACHE_TTL_SECONDS)
+    cache.set(cache_key, info, CACHE_TTL_SECONDS if info is not None else NEGATIVE_CACHE_TTL_SECONDS)
     return info
 
 
@@ -86,3 +89,24 @@ def get_prod_release():
 
 def get_staging_release():
     return _cached("gh_release_staging", f"https://api.github.com/repos/{GITHUB_REPO}/releases/tags/staging-latest")
+
+
+def resolve_asset_download_url(asset_id):
+    """The download-by-ID API endpoint is the one that works for a private
+    repo's release assets (with a token that has read access) as well as a
+    public one -- unlike `browser_download_url`, which requires the
+    *visitor's own* browser session to have repo access once the repo is
+    private, useless for anonymous site visitors. Requesting it with
+    Accept: octet-stream and no redirect-following returns a 302 to a
+    short-lived, unauthenticated signed URL -- resolved fresh on every
+    call (never cached), since that URL expires in a few minutes.
+    """
+    url = f"https://api.github.com/repos/{GITHUB_REPO}/releases/assets/{asset_id}"
+    headers = {"Accept": "application/octet-stream", **_auth_header()}
+    try:
+        resp = requests.get(url, headers=headers, timeout=REQUEST_TIMEOUT, allow_redirects=False)
+    except requests.RequestException:
+        return None
+    if resp.status_code in (301, 302):
+        return resp.headers.get("Location")
+    return None
