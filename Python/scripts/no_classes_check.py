@@ -14,11 +14,17 @@ EXCLUDE_DIRS = {
     ".pytest_cache",
     ".tox",
     "env",
+    # Django migration files always require `class Migration(migrations.Migration):`
+    # -- there's no functional-programming equivalent in Django's migration framework.
+    "migrations",
 }
 
 # window.py: PySide6 requires subclassing QWidget to override paintEvent /
 # mouse events -- there's no classless way to do that.
-EXCLUDE_FILES = {"test.py", "jc_api.py", "window.py"}
+# models.py: Django's ORM requires subclassing models.Model, with fields as
+# class attributes the metaclass turns into the DB table/manager -- there's
+# no classless way to do that either.
+EXCLUDE_FILES = {"test.py", "jc_api.py", "window.py", "models.py"}
 
 
 def iter_py_files():
