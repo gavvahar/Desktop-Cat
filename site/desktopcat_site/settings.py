@@ -1,7 +1,6 @@
-"""A single-purpose download page: no accounts, no forms, no database.
-Deliberately trimmed down from Django's default project template --
-INSTALLED_APPS/MIDDLEWARE only include what a stateless, DB-less GET-only
-site actually needs.
+"""Download page for Desktop Cat, gated behind login: free via Authentik
+SSO, or a one-time Stripe purchase for standalone accounts. Landing page
+content itself stays public -- only the download links require auth.
 """
 
 import os

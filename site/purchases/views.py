@@ -4,6 +4,7 @@ from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
@@ -19,19 +20,30 @@ def checkout(request):
     purchase, _ = Purchase.objects.get_or_create(user=request.user)
     if purchase.status == "paid":
         return redirect("index")
-    return render(request, "purchases/checkout.html", {"purchase": purchase})
+    return render(request, "purchases/checkout.html", {"purchase": purchase, "next_url": _safe_next(request, "next")})
+
+
+def _safe_next(request, param):
+    next_url = request.POST.get(param) or request.GET.get(param) or ""
+    if next_url and url_has_allowed_host_and_scheme(next_url, allowed_hosts={request.get_host()}, require_https=request.is_secure()):
+        return next_url
+    return ""
 
 
 @login_required
 @require_POST
 def start_checkout(request):
     purchase, _ = Purchase.objects.get_or_create(user=request.user)
+    success_url = request.build_absolute_uri(reverse("purchases:checkout_success"))
+    next_url = _safe_next(request, "next")
+    if next_url:
+        success_url = f"{success_url}?next={next_url}"
     session = stripe.checkout.Session.create(
         mode="payment",
         line_items=[{"price": settings.STRIPE_PRICE_ID, "quantity": 1}],
         customer_email=request.user.email or None,
         client_reference_id=str(request.user.pk),
-        success_url=request.build_absolute_uri(reverse("purchases:checkout_success")),
+        success_url=success_url,
         cancel_url=request.build_absolute_uri(reverse("purchases:checkout_cancel")),
     )
     purchase.stripe_checkout_session_id = session.id
@@ -41,7 +53,8 @@ def start_checkout(request):
 
 @login_required
 def checkout_success(request):
-    return render(request, "purchases/success.html")
+    next_url = _safe_next(request, "next")
+    return render(request, "purchases/success.html", {"next_url": next_url})
 
 
 @login_required
