@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Purchase Complete · Desktop Cat{% endblock %}
+{% block content %}
+<section class="auth-section">
+  <div class="auth-card">
+    <h1>You're all set</h1>
+    <p>Your purchase went through. {% if next_url %}Click below to grab your download.{% else %}Head back to the download page to grab Desktop Cat.{% endif %}</p>
+    <a class="btn btn-primary" href="{{ next_url|default:'/' }}">{% if next_url %}Download now{% else %}Back to downloads{% endif %}</a>
+  </div>
+</section>
+{% endblock %}

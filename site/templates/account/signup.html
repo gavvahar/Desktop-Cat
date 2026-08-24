@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Sign Up · Desktop Cat{% endblock %}
+{% block content %}
+<section class="auth-section">
+  <div class="auth-card">
+    <h1>Create an account</h1>
+    <p>Standalone accounts need a one-time purchase to unlock downloads. Have Authentik SSO instead? <a href="{% url 'account_login' %}">Sign in</a> for free access.</p>
+
+    <form method="post" action="{% url 'account_signup' %}">
+      {% csrf_token %}
+      {% if form.non_field_errors %}
+        <p class="auth-field-errors">{{ form.non_field_errors.0 }}</p>
+      {% endif %}
+      {% for field in form %}
+        <div class="auth-field">
+          <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {{ field }}
+          {% if field.errors %}<p class="auth-field-errors">{{ field.errors.0 }}</p>{% endif %}
+        </div>
+      {% endfor %}
+      {{ redirect_field }}
+      <div class="auth-actions">
+        <button type="submit" class="btn btn-primary">Sign up</button>
+      </div>
+    </form>
+
+    <p class="auth-footer-link">Already have an account? <a href="{% url 'account_login' %}">Sign in</a></p>
+  </div>
+</section>
+{% endblock %}

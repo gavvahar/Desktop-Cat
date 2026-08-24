@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% load socialaccount %}
+{% block title %}Sign In · Desktop Cat{% endblock %}
+{% block content %}
+<section class="auth-section">
+  <div class="auth-card">
+    <h1>Sign in</h1>
+    <p>Sign in to download Desktop Cat.</p>
+
+    {% get_providers as socialaccount_providers %}
+    {% if socialaccount_providers %}
+      {% for provider in socialaccount_providers %}
+        {% provider_login_url provider.id process="login" as provider_href %}
+        <a class="btn btn-secondary" style="width: 100%; text-align: center; display: block; margin-bottom: 12px;" href="{{ provider_href }}">Sign in via {{ provider.name }}</a>
+      {% endfor %}
+      <div class="auth-divider">or</div>
+    {% endif %}
+
+    <form method="post" action="{% url 'account_login' %}">
+      {% csrf_token %}
+      {% if form.non_field_errors %}
+        <p class="auth-field-errors">{{ form.non_field_errors.0 }}</p>
+      {% endif %}
+      <div class="auth-field">
+        <label for="{{ form.login.id_for_label }}">{{ form.login.label }}</label>
+        {{ form.login }}
+        {% if form.login.errors %}<p class="auth-field-errors">{{ form.login.errors.0 }}</p>{% endif %}
+      </div>
+      <div class="auth-field">
+        <label for="{{ form.password.id_for_label }}">{{ form.password.label }}</label>
+        {{ form.password }}
+        {% if form.password.errors %}<p class="auth-field-errors">{{ form.password.errors.0 }}</p>{% endif %}
+      </div>
+      {{ redirect_field }}
+      <div class="auth-actions">
+        <button type="submit" class="btn btn-primary">Sign in</button>
+      </div>
+    </form>
+
+    <p class="auth-footer-link">Don't have an account? <a href="{% url 'account_signup' %}">Sign up</a></p>
+  </div>
+</section>
+{% endblock %}

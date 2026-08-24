@@ -1,11 +1,17 @@
 # Desktop Cat — download site
 
-A small Django app that serves a single landing/download page for Desktop
-Cat. No database, no accounts, no forms -- it fetches the latest stable
-(`main`, tag `vX.Y.Z`) and staging (`staging`, tag `staging-latest`)
-release info straight from the GitHub Releases API server-side, caches it
-for 5 minutes, and renders download buttons for whatever assets each
-release actually has (AppImage, Windows `.zip`, macOS `.zip`, Flatpak).
+A small Django app that serves a landing/download page for Desktop Cat.
+It fetches the latest stable (`main`, tag `vX.Y.Z`) and staging
+(`staging`, tag `staging-latest`) release info straight from the GitHub
+Releases API server-side, caches it for 5 minutes, and renders download
+buttons for whatever assets each release actually has (AppImage, Windows
+`.zip`, macOS `.zip`, Flatpak).
+
+Landing/features/instructions content is public. Clicking an actual
+download link requires being signed in: free via Authentik SSO, or a
+one-time Stripe purchase for a standalone account (`django-allauth` +
+`stripe`, SQLite on a persistent volume -- see `desktopcat_site/settings.py`
+and the `purchases` app).
 
 Asset filenames are matched against what `.github/workflows/release.yml`
 and `.github/workflows/staging.yml` (in the repo root) actually upload --

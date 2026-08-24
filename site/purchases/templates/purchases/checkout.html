@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Unlock Downloads · Desktop Cat{% endblock %}
+{% block content %}
+<section class="auth-section">
+  <div class="auth-card">
+    <h1>Unlock downloads</h1>
+    <p>Standalone accounts need a one-time purchase to download Desktop Cat. Signed in with Authentik SSO instead? Downloads are free -- just <a href="/">head back and download</a>.</p>
+    <form method="post" action="{% url 'purchases:start_checkout' %}">
+      {% csrf_token %}
+      {% if next_url %}<input type="hidden" name="next" value="{{ next_url }}">{% endif %}
+      <div class="auth-actions">
+        <button type="submit" class="btn btn-primary">Continue to payment</button>
+      </div>
+    </form>
+  </div>
+</section>
+{% endblock %}
