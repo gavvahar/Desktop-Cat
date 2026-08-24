@@ -22,6 +22,7 @@ INSTALLED_APPS = [
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
+    "allauth.socialaccount.providers.openid_connect",
     "downloads",
 ]
 
@@ -121,6 +122,26 @@ ACCOUNT_LOGIN_METHODS = {"username", "email"}
 ACCOUNT_LOGOUT_ON_GET = False
 LOGIN_URL = "account_login"
 LOGIN_REDIRECT_URL = "index"
+
+# Authentik SSO via OIDC. provider_id="authentik" is what ends up in
+# SocialAccount.provider for users who sign in this way -- that's how
+# downloads.views.download_asset tells an SSO login apart from a
+# standalone (paying) account.
+SOCIALACCOUNT_PROVIDERS = {
+    "openid_connect": {
+        "APPS": [
+            {
+                "provider_id": "authentik",
+                "name": "Authentik",
+                "client_id": os.environ.get("AUTHENTIK_OIDC_CLIENT_ID", ""),
+                "secret": os.environ.get("AUTHENTIK_OIDC_CLIENT_SECRET", ""),
+                "settings": {
+                    "server_url": os.environ.get("AUTHENTIK_OIDC_ISSUER", ""),
+                },
+            }
+        ]
+    }
+}
 
 LANGUAGE_CODE = "en-us"
 TIME_ZONE = "UTC"
