@@ -15,6 +15,8 @@ COPY . .
 # runtime, set it via .env for that.
 RUN python manage.py collectstatic --noinput
 
+RUN chmod +x entrypoint.sh
+
 EXPOSE 8000
 
-CMD ["gunicorn", "desktopcat_site.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "3"]
+ENTRYPOINT ["./entrypoint.sh"]
