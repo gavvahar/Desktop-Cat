@@ -32,4 +32,4 @@ dependencies:
 # compiling against -- and fails. The plain host gcc + the kernel headers
 # that ship with it (apt's build-essential + linux-libc-dev) don't have
 # this mismatch, since both steps then resolve to the same headers. Build
-# this env with `CC=gcc conda env create -f enviroment.yml`.
+# this env with `CC=gcc conda env create -f environment.yml`.

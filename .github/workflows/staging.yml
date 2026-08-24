@@ -9,7 +9,7 @@ on:
     # it changes what actually gets built/shipped, unlike these.
     paths-ignore:
       - "**.md"
-      - "enviroment.yml"
+      - "environment.yml"
       - ".github/workflows/*.yml"
   workflow_dispatch:
 
