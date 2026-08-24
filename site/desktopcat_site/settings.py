@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     "allauth.socialaccount",
     "allauth.socialaccount.providers.openid_connect",
     "downloads",
+    "purchases",
 ]
 
 MIDDLEWARE = [
@@ -142,6 +143,14 @@ SOCIALACCOUNT_PROVIDERS = {
         ]
     }
 }
+
+# Stripe one-time purchase for standalone (non-SSO) accounts. STRIPE_PRICE_ID
+# is a Price created once in the Stripe Dashboard, not built from a raw
+# amount here, so the price can change without a code deploy.
+STRIPE_SECRET_KEY = os.environ.get("STRIPE_SECRET_KEY", "")
+STRIPE_PUBLISHABLE_KEY = os.environ.get("STRIPE_PUBLISHABLE_KEY", "")
+STRIPE_WEBHOOK_SECRET = os.environ.get("STRIPE_WEBHOOK_SECRET", "")
+STRIPE_PRICE_ID = os.environ.get("STRIPE_PRICE_ID", "")
 
 LANGUAGE_CODE = "en-us"
 TIME_ZONE = "UTC"
