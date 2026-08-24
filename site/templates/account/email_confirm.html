@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load account %}
+{% block title %}Confirm Email · Desktop Cat{% endblock %}
+{% block content %}
+<section class="auth-section">
+  <div class="auth-card">
+    {% if confirmation %}
+      {% user_display confirmation.email_address.user as user_display %}
+      {% if can_confirm %}
+        <h1>Confirm your email</h1>
+        <p>Confirm that {{ confirmation.email_address.email }} belongs to {{ user_display }}.</p>
+        <form method="post" action="{% url 'account_confirm_email' confirmation.key %}">
+          {% csrf_token %}
+          {{ redirect_field }}
+          <div class="auth-actions">
+            <button type="submit" class="btn btn-primary">Confirm</button>
+          </div>
+        </form>
+      {% else %}
+        <h1>Already confirmed</h1>
+        <p>{{ confirmation.email_address.email }} is already confirmed by a different account.</p>
+      {% endif %}
+    {% else %}
+      <h1>Link expired</h1>
+      <p>This confirmation link expired or is invalid. <a href="{% url 'account_login' %}">Sign in</a> to request a new one.</p>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

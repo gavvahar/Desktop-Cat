@@ -15,6 +15,13 @@
     <link rel="stylesheet" href="{% static 'downloads/css/style.css' %}" />
   </head>
   <body>
+    {% if messages %}
+      <ul class="auth-messages">
+        {% for message in messages %}
+          <li>{{ message }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
     {% block content %}{% endblock %}
     <script src="{% static 'downloads/js/main.js' %}"></script>
   </body>
