@@ -6,7 +6,7 @@
 pip install -r requirements.txt
 ```
 
-(or `conda env create -f enviroment.yml`, or `.\install.ps1` on native
+(or `conda env create -f environment.yml`, or `.\install.ps1` on native
 Windows -- see the README for details). PySide6 apps need a real display to
 run.
 
