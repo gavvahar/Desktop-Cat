@@ -192,7 +192,8 @@ h2 {
   margin-bottom: 0;
 }
 
-.instructions-card code {
+.instructions-card code,
+.release-notes-body code {
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: 4px;
@@ -201,13 +202,17 @@ h2 {
   color: var(--text);
 }
 
-.instructions-card pre {
+.instructions-card pre,
+.release-notes-body pre {
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 12px 14px;
-  margin: 0 0 12px;
   overflow-x: auto;
+}
+
+.instructions-card pre {
+  margin: 0 0 12px;
 }
 
 .instructions-card pre code {
@@ -325,23 +330,6 @@ h2 {
 
 .release-notes-body p {
   margin: 0 0 12px;
-}
-
-.release-notes-body code {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  padding: 1px 5px;
-  font-size: 13px;
-  color: var(--text);
-}
-
-.release-notes-body pre {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 12px 14px;
-  overflow-x: auto;
 }
 
 .release-notes-body a {

@@ -1,0 +1,25 @@
+name: Download build artifacts
+description: Download all four packaged build artifacts into dist-assets/
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/download-artifact@v8
+      with:
+        name: appimage
+        path: dist-assets
+
+    - uses: actions/download-artifact@v8
+      with:
+        name: windows-exe
+        path: dist-assets
+
+    - uses: actions/download-artifact@v8
+      with:
+        name: macos-app
+        path: dist-assets
+
+    - uses: actions/download-artifact@v8
+      with:
+        name: flatpak
+        path: dist-assets
