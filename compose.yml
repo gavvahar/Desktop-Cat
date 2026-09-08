@@ -9,6 +9,8 @@ services:
       - "8000:8000"
     volumes:
       - cache-data:/tmp/desktopcat-site-cache
+      - db-data:/data
 
 volumes:
   cache-data:
+  db-data:

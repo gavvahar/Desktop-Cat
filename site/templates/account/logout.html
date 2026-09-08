@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Sign Out · Desktop Cat{% endblock %}
+{% block content %}
+<section class="auth-section">
+  <div class="auth-card">
+    <h1>Sign out</h1>
+    <p>Are you sure you want to sign out?</p>
+    <form method="post" action="{% url 'account_logout' %}">
+      {% csrf_token %}
+      {{ redirect_field }}
+      <div class="auth-actions">
+        <button type="submit" class="btn btn-primary">Sign out</button>
+      </div>
+    </form>
+  </div>
+</section>
+{% endblock %}

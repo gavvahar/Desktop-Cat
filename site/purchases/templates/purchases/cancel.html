@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Purchase Canceled · Desktop Cat{% endblock %}
+{% block content %}
+<section class="auth-section">
+  <div class="auth-card">
+    <h1>Purchase canceled</h1>
+    <p>No charge was made. You can try again whenever you're ready.</p>
+    <a class="btn btn-primary" href="{% url 'purchases:checkout' %}">Try again</a>
+  </div>
+</section>
+{% endblock %}

@@ -1,4 +1,4 @@
-name: Code Quality
+name: Duplicate Code
 
 on:
   push:
@@ -8,4 +8,4 @@ jobs:
   quality:
     uses: ./.github/workflows/tox-check-reusable.yml
     with:
-      tox_env: github
+      tox_env: duplicate-code

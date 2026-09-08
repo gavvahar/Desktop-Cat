@@ -1,0 +1,20 @@
+name: Setup git-cliff
+description: Download the latest git-cliff release and put it on PATH
+
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      run: |
+        CLIFF_VER=$(curl -sf "https://api.github.com/repos/orhun/git-cliff/releases/latest" \
+          | python3 -c "import sys,json; print(json.load(sys.stdin)['tag_name'].lstrip('v'))")
+        curl -fsSL \
+          "https://github.com/orhun/git-cliff/releases/download/v${CLIFF_VER}/git-cliff-${CLIFF_VER}-x86_64-unknown-linux-musl.tar.gz" \
+          | tar -xz -C /tmp
+        # find exits non-zero on the runner's root-owned /tmp/systemd-private-*
+        # dirs it can't traverse, even though it still locates the binary; under
+        # bash -e -o pipefail that aborts the step before chmod runs, so swallow
+        # the stderr noise and neutralize the pipeline's exit code explicitly.
+        CLIFF=$(find /tmp -name "git-cliff" -type f 2>/dev/null | head -1 || true)
+        chmod +x "$CLIFF"
+        dirname "$CLIFF" >> "$GITHUB_PATH"

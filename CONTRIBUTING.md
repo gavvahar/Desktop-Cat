@@ -6,19 +6,27 @@
 pip install -r requirements.txt
 ```
 
-(or `conda env create -f enviroment.yml`, or `.\install.ps1` on native
+(or `conda env create -f environment.yml`, or `.\install.ps1` on native
 Windows -- see the README for details). PySide6 apps need a real display to
 run.
 
 ## Code style
 
 - **No custom classes in Python files.** State lives in module-level dicts
-  (`Python/desktopcat/state.py`); behavior is plain functions. The one
-  exception is `Python/desktopcat/window.py`, which PySide6 requires to
-  subclass `QWidget` in order to override `paintEvent`/mouse events -- it's
-  allowlisted in `Python/scripts/no_classes_check.py`'s `EXCLUDE_FILES` and
-  should stay pure Qt glue (no logic beyond one-line delegations into
-  `input.py`/`render.py`).
+  (`Python/desktopcat/state.py`); behavior is plain functions. Exceptions,
+  all allowlisted in `Python/scripts/no_classes_check.py`:
+  - `Python/desktopcat/window.py`, which PySide6 requires to subclass
+    `QWidget` in order to override `paintEvent`/mouse events -- it should
+    stay pure Qt glue (no logic beyond one-line delegations into
+    `input.py`/`render.py`).
+  - Any `models.py`, which Django's ORM requires to subclass `models.Model`
+    (fields are class attributes the metaclass turns into the DB
+    table/manager -- there's no classless equivalent), and any `migrations/`
+    directory, whose generated files always declare
+    `class Migration(migrations.Migration):`. Both are scoped to the Django
+    site under `site/`; keep views/urls/other site code function-based, and
+    prefer plain tuples over `models.TextChoices` for model field choices
+    to avoid a second class.
 - **One `import` line per file for bare `import x` statements** -- combine
   multiple into `import x, y, z`. `from x import y` is untouched. Enforced
   by `Python/scripts/combined_imports_check.py`; run it with `--fix` to

@@ -9,92 +9,16 @@ on:
     # it changes what actually gets built/shipped, unlike these.
     paths-ignore:
       - "**.md"
-      - "enviroment.yml"
+      - "environment.yml"
       - ".github/workflows/*.yml"
   workflow_dispatch:
 
 jobs:
-  build-appimage:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v7
-
-      - uses: actions/setup-python@v7
-        with:
-          python-version: "3.x"
-
-      - name: Build AppImage
-        run: bash packaging/appimage/build.sh
-
-      - uses: actions/upload-artifact@v7
-        with:
-          name: appimage
-          path: packaging/appimage/Desktop-Cat-x86_64.AppImage
-          if-no-files-found: error
-
-  build-windows-exe:
-    runs-on: windows-latest
-
-    steps:
-      - uses: actions/checkout@v7
-
-      - uses: actions/setup-python@v7
-        with:
-          python-version: "3.x"
-
-      - name: Build Windows executable
-        shell: pwsh
-        run: .\packaging\windows\build.ps1
-
-      - uses: actions/upload-artifact@v7
-        with:
-          name: windows-exe
-          path: packaging/windows/dist/Desktop-Cat-windows.zip
-          if-no-files-found: error
-
-  build-macos-app:
-    runs-on: macos-latest
-
-    steps:
-      - uses: actions/checkout@v7
-
-      - uses: actions/setup-python@v7
-        with:
-          python-version: "3.x"
-
-      - name: Build macOS app
-        run: bash packaging/macos/build.sh
-
-      - uses: actions/upload-artifact@v7
-        with:
-          name: macos-app
-          path: packaging/macos/dist/Desktop-Cat-macos.zip
-          if-no-files-found: error
-
-  build-flatpak:
-    runs-on: ubuntu-latest
-    container:
-      image: bilelmoussaoui/flatpak-github-actions:freedesktop-23.08
-      options: --privileged
-
-    steps:
-      - uses: actions/checkout@v7
-
-      - uses: flatpak/flatpak-github-actions/flatpak-builder@v6
-        with:
-          bundle: Desktop-Cat.flatpak
-          manifest-path: packaging/flatpak/io.github.gavvahar.DesktopCat.yml
-          cache-key: flatpak-builder-${{ github.sha }}
-
-      - uses: actions/upload-artifact@v7
-        with:
-          name: flatpak
-          path: Desktop-Cat.flatpak
-          if-no-files-found: error
+  build:
+    uses: ./.github/workflows/build-packages.yml
 
   publish-staging:
-    needs: [build-appimage, build-windows-exe, build-macos-app, build-flatpak]
+    needs: build
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -102,25 +26,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - uses: actions/download-artifact@v8
-        with:
-          name: appimage
-          path: dist-assets
-
-      - uses: actions/download-artifact@v8
-        with:
-          name: windows-exe
-          path: dist-assets
-
-      - uses: actions/download-artifact@v8
-        with:
-          name: macos-app
-          path: dist-assets
-
-      - uses: actions/download-artifact@v8
-        with:
-          name: flatpak
-          path: dist-assets
+      - uses: ./.github/actions/download-build-artifacts
 
       - name: Publish rolling staging pre-release
         env:
