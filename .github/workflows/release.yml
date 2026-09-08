@@ -86,102 +86,13 @@ jobs:
           # tag when there is one, otherwise a short SHA (never the raw 40-char hash).
           echo "prev=${LATEST_TAG:-$(git rev-parse --short "$BASE_SHA")}" >> "$GITHUB_OUTPUT"
 
-  build-appimage:
+  build:
     needs: version
     if: needs.version.outputs.skip == 'false'
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v7
-
-      - uses: actions/setup-python@v7
-        with:
-          python-version: "3.x"
-
-      - name: Build AppImage
-        run: bash packaging/appimage/build.sh
-
-      - uses: actions/upload-artifact@v7
-        with:
-          name: appimage
-          path: packaging/appimage/Desktop-Cat-x86_64.AppImage
-          if-no-files-found: error
-
-  build-windows-exe:
-    needs: version
-    if: needs.version.outputs.skip == 'false'
-    runs-on: windows-latest
-
-    steps:
-      - uses: actions/checkout@v7
-
-      - uses: actions/setup-python@v7
-        with:
-          python-version: "3.x"
-
-      - name: Build Windows executable
-        shell: pwsh
-        run: .\packaging\windows\build.ps1
-
-      - uses: actions/upload-artifact@v7
-        with:
-          name: windows-exe
-          path: packaging/windows/dist/Desktop-Cat-windows.zip
-          if-no-files-found: error
-
-  build-macos-app:
-    needs: version
-    if: needs.version.outputs.skip == 'false'
-    runs-on: macos-latest
-
-    steps:
-      - uses: actions/checkout@v7
-
-      - uses: actions/setup-python@v7
-        with:
-          python-version: "3.x"
-
-      - name: Build macOS app
-        run: bash packaging/macos/build.sh
-
-      - uses: actions/upload-artifact@v7
-        with:
-          name: macos-app
-          path: packaging/macos/dist/Desktop-Cat-macos.zip
-          if-no-files-found: error
-
-  build-flatpak:
-    needs: version
-    if: needs.version.outputs.skip == 'false'
-    runs-on: ubuntu-latest
-    container:
-      image: bilelmoussaoui/flatpak-github-actions:freedesktop-23.08
-      options: --privileged
-
-    steps:
-      - uses: actions/checkout@v7
-
-      - uses: flatpak/flatpak-github-actions/flatpak-builder@v6
-        with:
-          bundle: Desktop-Cat.flatpak
-          manifest-path: packaging/flatpak/io.github.gavvahar.DesktopCat.yml
-          cache-key: flatpak-builder-${{ github.sha }}
-
-      - uses: actions/upload-artifact@v7
-        with:
-          name: flatpak
-          path: Desktop-Cat.flatpak
-          if-no-files-found: error
+    uses: ./.github/workflows/build-packages.yml
 
   release:
-    needs:
-      [
-        version,
-        build-appimage,
-        build-windows-exe,
-        build-macos-app,
-        build-flatpak,
-      ]
+    needs: [version, build]
     if: needs.version.outputs.skip == 'false'
     runs-on: ubuntu-latest
     permissions:
@@ -193,38 +104,14 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: actions/download-artifact@v8
-        with:
-          name: appimage
-          path: dist-assets
+      - uses: ./.github/actions/download-build-artifacts
 
-      - uses: actions/download-artifact@v8
-        with:
-          name: windows-exe
-          path: dist-assets
-
-      - uses: actions/download-artifact@v8
-        with:
-          name: macos-app
-          path: dist-assets
-
-      - uses: actions/download-artifact@v8
-        with:
-          name: flatpak
-          path: dist-assets
+      - uses: ./.github/actions/setup-git-cliff
 
       - name: Generate changelog from commits
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
-          CLIFF_VER=$(curl -sf "https://api.github.com/repos/orhun/git-cliff/releases/latest" \
-            | python3 -c "import sys,json; print(json.load(sys.stdin)['tag_name'].lstrip('v'))")
-          curl -fsSL \
-            "https://github.com/orhun/git-cliff/releases/download/v${CLIFF_VER}/git-cliff-${CLIFF_VER}-x86_64-unknown-linux-musl.tar.gz" \
-            | tar -xz -C /tmp
-          CLIFF=$(find /tmp -name "git-cliff" -type f | head -1)
-          chmod +x "$CLIFF"
-
           # git-cliff splits the range into a separate chunk at every merge commit
           # (cascade-merge syncs create one on nearly every dev/main push), which
           # produces duplicate category headers if rendered via its own Jinja body
@@ -239,12 +126,12 @@ jobs:
           # limit, outage), so fall back to --offline on failure rather than losing
           # the release over an attribution lookup -- gen_release_notes.py already
           # falls back to the raw git author name when GitHub data is unavailable.
-          if ! "$CLIFF" --config pyproject.toml --github-repo "${{ github.repository }}" --context \
+          if ! git-cliff --config pyproject.toml --github-repo "${{ github.repository }}" --context \
             "${{ needs.version.outputs.base }}..HEAD" \
             > /tmp/cliff_context.json 2>/tmp/cliff_err.txt; then
             echo "::warning::git-cliff GitHub attribution lookup failed, falling back to --offline"
             cat /tmp/cliff_err.txt
-            "$CLIFF" --config pyproject.toml --offline --context \
+            git-cliff --config pyproject.toml --offline --context \
               "${{ needs.version.outputs.base }}..HEAD" \
               > /tmp/cliff_context.json
           fi
