@@ -13,6 +13,16 @@ on:
       - ".github/workflows/*.yml"
   workflow_dispatch:
 
+# Serialize releases on main: two pushes landing close together (e.g. a normal
+# merge immediately followed by a cascade-merge dependabot bump) would otherwise
+# run concurrently and both diff against the same last-known tag, computing the
+# same next version and racing to publish it -- the loser fails on tag collision
+# after already spending CI time on every package build. Queuing (not cancelling)
+# ensures each run sees the previous run's tag before computing its own.
+concurrency:
+  group: release-main
+  cancel-in-progress: false
+
 jobs:
   version:
     runs-on: ubuntu-latest
