@@ -2,10 +2,10 @@
   "name": "desktop-cat",
   "private": true,
   "dependencies": {
-    "prettier": "^3.9.8"
+    "prettier": "^3.9.10"
   },
   "devDependencies": {
-    "jscpd": "^5.3.1",
+    "jscpd": "^5.4.1",
     "textlint": "^15.8.0",
     "textlint-rule-common-misspellings": "^1.0.1",
     "textlint-rule-write-good": "^2.0.0"
